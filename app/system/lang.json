@@ -1,4 +1,13 @@
 {
   "login" : ["Log In to", "로그인"],
-  "policy" : ["Policy·Terms Of Service", "사용약관 및 정책"]
+  "signup" : ["Sign Up to", "회원가입"],
+  "policy" : ["Policy·Terms Of Service", "사용약관 및 정책"],
+  "loginDes" : ["Enter your Class Rules user details and \nStart managing Class Rules.", "Class Rules의 유저 정보를 입력하고 \n선급 규칙 관리를 시작해보세요."],
+  "signupDes" : ["Become a member of Class Rules and \nStart managing Class Rules.", "Class Rules의 멤버가 되어 \n선급 규칙 관리를 시작해보세요."],
+  "email" : ["Email", "이메일"],
+  "password" : ["Password", "비밀번호"],
+  "forgot" : ["forgot your password?", "비밀번호를 잊어버리셨나요?"],
+  "create" : ["Create Account", "계정 만들기"],
+  "loginBtn" : ["Log In", "로그인"],
+  "signupName" : ["Full Name", "이름"]
 }

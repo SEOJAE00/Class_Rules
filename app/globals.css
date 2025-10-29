@@ -15,3 +15,40 @@ html, body {
 div {
   box-sizing: border-box;
 }
+
+.grayText {
+  color: #555555;
+}
+
+.wrapText {
+  white-space: pre-line;
+}
+
+.line-24 {
+  line-height: 24px;
+}
+
+.flex {
+  display: flex;
+}
+
+.login-logo {
+  color: #0085CA;
+  font-size: 60px;
+  font-weight: 300;
+  line-height: 64px;
+  letter-spacing: -1.2px;
+}
+.login-logo span {
+  font-weight: 700;
+}
+
+.nomal-logo {
+  color: #0085CA;
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: -0.56px;
+}
+.nomal-logo span {
+  font-weight: 700;
+}

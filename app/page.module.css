@@ -1,0 +1,195 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.loginPage {
+  width: 1024px;
+  height: 452px;
+  border-radius: 8px;
+  border: 1px solid #CCC;
+  background: #FEFEFE;
+  padding: 50px;
+  transform: translateY(-10px);
+  position: relative;
+  display: flex;
+}
+
+/* 로그인/회원가입 폼 죄측 정보 */
+.loginWrapper {
+  margin-bottom: 20px;
+}
+.loginTo {
+  font-size: 60px;
+  font-weight: 500;
+  line-height: 64px;
+}
+.changeLangBox {
+  width: 102px;
+  height: 34px;
+  border-radius: 4px;
+  border: 1px solid #CCC;
+  background: #FFF;
+  cursor: pointer;
+  padding: 7px 16px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: 0.3s;
+}
+.changeLangBox2 {
+  width: 102px;
+  height: 68px;
+  border-radius: 4px;
+  border: 1px solid #CCC;
+  background: #FFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  position: relative;
+  transition: 0.3s;
+}
+.langBoxText {
+  font-size: 15px;
+  font-weight: 500;
+  position: absolute;
+  top: 7px;
+  left: 16px;
+}
+.langBoxText2 {
+  width: 96px;
+  height: 32px;
+  position: absolute;
+  left: 2px;
+  bottom: 2px;
+  cursor: pointer;
+  padding-top: 6px;
+  transition: 0.3s;
+  opacity: 1;
+  pointer-events: auto;
+}
+.active {
+  opacity: 0;
+  pointer-events: none;
+}
+.langBoxText2:hover {
+  background-color: #dddddd;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+.langBoxText2 span {
+  padding-left: 14px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.langBoxArrow {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 500;
+  top: 9px;
+  right: 16px;
+}
+.langWrap {
+  display: flex;
+  gap: 14px;
+  margin-top: 122px;
+  position: relative;
+}
+.terms {
+  color: #0085CA;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  position: absolute;
+  top: 7.5px;
+  left: 116;
+}
+
+/* 로그인, 회원가입 폼 */
+.loginEmailText {
+  font-weight: 500;
+}
+.loginFormWrapper {
+  width: 350px;
+  position: absolute;
+  right: 50px;
+  bottom: 50px;
+}
+.inputStyle {
+  width: 336px;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  background: #fefefe;
+  font-size: 16px;
+  padding-left: 10px;
+  margin-top: 10px;
+}
+.inputStyle:focus {
+  outline: none;
+  border: 1px solid #0085CA;
+  background: #f7fcff;
+}
+.forgotPass {
+  color: #555;
+  font-size: 16px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.createAccount {
+  color: #0085CA;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.loginBtn {
+  width: 350px;
+  height: 44px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.loginBtnDisabled {
+  background: #888888;
+  transition: 0.3s;
+}
+.loginBtnActive {
+  background: #0085CA;
+  transition: 0.3s;
+}
+.passwordVisibleIcon {
+  position: absolute;
+  top: 132;
+  right: 14;
+}
+
+.signupFormWrapper {
+  width: 520px;
+  position: absolute;
+  right: 50px;
+  top: 50px;
+}
+.inputStyleSign {
+  width: 236px;
+  height: 40px;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  background: #fefefe;
+  font-size: 16px;
+  padding-left: 10px;
+  margin-top: 10px;
+}
+.inputStyleSign:focus {
+  outline: none;
+  border: 1px solid #0085CA;
+  background: #f7fcff;
+}
+.loginEmailText span {
+  font-weight: 500;
+  color: #d00000;
+}

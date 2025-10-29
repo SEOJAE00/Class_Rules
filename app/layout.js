@@ -1,10 +1,5 @@
-import { Geist } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+import { LangProvider } from "./context/LangContext";
 
 export const metadata = {
   title: "Class Rules",
@@ -21,7 +16,7 @@ export default function RootLayout({ children }) {
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
       ></script>
       <body>
-        {children}
+        <LangProvider>{children}</LangProvider>
       </body>
     </html>
   );
