@@ -36,7 +36,7 @@ export default function Home() {
   // 로그인 함수, 실제 베포 시 API url 숨겨야 함
   const handleLogin = async () => {
     try {
-      const response = await axios.post("https://marinedocs.kro.kr/api/proxy/api/auth/login", {
+      const response = await axios.post(process.env.NEXT_PUBLIC_LOGIN_API_URL, {
         email : loginEmail,
         password : loginPassword,
       }, {
