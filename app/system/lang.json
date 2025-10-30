@@ -6,8 +6,15 @@
   "signupDes" : ["Become a member of Class Rules and \nStart managing Class Rules.", "Class Rules의 멤버가 되어 \n선급 규칙 관리를 시작해보세요."],
   "email" : ["Email", "이메일"],
   "password" : ["Password", "비밀번호"],
+  "confirmPassword" :["Confirm Password", "비밀번호 확인"],
+  "wrongPassword" :["8-16 characters, \ninclude numbers & special characters", "8-16자의 영문자, 숫자, 특수문자"],
   "forgot" : ["forgot your password?", "비밀번호를 잊어버리셨나요?"],
   "create" : ["Create Account", "계정 만들기"],
   "loginBtn" : ["Log In", "로그인"],
-  "signupName" : ["Full Name", "이름"]
+  "signupBtn" : ["Sign Up", "회원가입"],
+  "signupName" : ["Full Name", "이름"],
+  "birth" : ["Date of Birth","생년월일"],
+  "birthEx" : ["ex) 2000-01-01", "예시) 2000-01-01"],
+  "company" : ["Company Name", "회사 이름"],
+  "job" : ["Job Title", "직책"]
 }

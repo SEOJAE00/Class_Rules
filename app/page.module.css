@@ -130,6 +130,7 @@
   outline: none;
   border: 1px solid #0085CA;
   background: #f7fcff;
+  transition: 0.3s;
 }
 .forgotPass {
   color: #555;
@@ -173,6 +174,9 @@
   position: absolute;
   right: 50px;
   top: 50px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 .inputStyleSign {
   width: 236px;
@@ -188,8 +192,72 @@
   outline: none;
   border: 1px solid #0085CA;
   background: #f7fcff;
+  transition: 0.3s;
 }
 .loginEmailText span {
   font-weight: 500;
   color: #d00000;
+}
+.wrongType:focus {
+  border: 1px solid #d00000 !important;
+  background: #fff0f0 !important;
+  transition: 0.3s;
+}
+.birthEx {
+  font-size: 14px;
+  color: #555555;
+  font-weight: 400;
+  display: inline-block;
+  margin-left: 6px;
+  padding-bottom: 1px;
+}
+.notMatch {
+  font-size: 14px;
+  color: #d00000;
+  font-weight: 400;
+  display: inline-block;
+  margin-left: 6px;
+  padding-bottom: 1px;
+}
+.signupBtn {
+  width: 150px;
+  height: 44px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+  margin-left: 20px;
+}
+.signupForm {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+.wrongPassword {
+  width: fit-content;
+  white-space: pre-line;
+  color: #D00000;
+  border-radius: 4px;
+  border: 1px solid #D00000;
+  font-size: 14px;
+  background: #FFF;
+  padding: 8px 12px;
+  position: absolute;
+  /* left: 1037;
+  top: 267; */
+  cursor: pointer;
+  z-index: 999;
+}
+.wrongPasswordOn {
+  opacity: 1;
+  pointer-events: auto;
+  transition: 0.5s;
+}
+.wrongPasswordOff {
+  opacity: 0;
+  pointer-events: none;
+  transition: 1s;
 }

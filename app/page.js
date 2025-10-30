@@ -56,6 +56,84 @@ export default function Home() {
 
   // 회원가입 관련 인풋
   let [signupName, setSignupName] = useState("");
+  let [birth, setBirth] = useState("");
+  let [company, setCompany] = useState("");
+  let [job, setJob] = useState("");
+  let [signupEmail, setSignupEmail] = useState("");
+  let [signupPassword, setSignupPassword] = useState("");
+  let [confirmPassword, setConfirmPassword] = useState("");
+  
+  // 이메일 형식 검사 정규식, 함수
+  let [signupEmailCK, setSignupEmailCK] = useState(true);
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setSignupEmail(value);
+    const regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    setSignupEmailCK(regex.test(value) || value === "");
+  };
+  
+  // 생년월일 형식 검사: 0000-00-00, 함수
+  let [birthCK, setBirthCK] = useState(true);
+  const handleBirthChange = (e) => {
+    let value = e.target.value.replace(/[^0-9]/g, ""); // 숫자 외 제거
+    // 입력한 숫자 길이에 따라 자동으로 '-' 삽입
+    if (value.length > 4 && value.length <= 6) {
+      value = value.slice(0, 4) + "-" + value.slice(4);
+    } else if (value.length > 6) {
+      value = value.slice(0, 4) + "-" + value.slice(4, 6) + "-" + value.slice(6, 8);
+    }
+    setBirth(value);
+    const regex = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    setBirthCK(regex.test(value) || value === "");
+  };
+  
+  // 비밀번호 형식 검사: 8~16자, 영어(대소문자 무관) + 숫자 + 특수문자 포함, 함수
+  let [signupPasswordCK, setSignupPasswordCK] = useState(true);
+  let [wrongPasswordPop, setWrongPasswordPop] = useState(false);
+  
+  //3초후 패스워드 형식 팝업 닫힘
+  useEffect(()=>{
+    if(wrongPasswordPop) {
+      setTimeout(() => {
+        setWrongPasswordPop(false)
+      }, 3000);
+    }
+    return
+  }, [wrongPasswordPop])
+
+  const handlePasswordChange = (e) => {
+    let value = e.target.value;
+    setSignupPassword(value);
+    const regex =
+      /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]|\\:;"'<>,.?/])[a-zA-Z\d!@#$%^&*()_+\-={}[\]|\\:;"'<>,.?/]{8,16}$/;
+    setSignupPasswordCK(regex.test(value) || value === "");
+  };
+  const confirmedPassword = signupPassword == confirmPassword;
+
+  // 회원가입 함수, 실제 베포 시 API url 숨겨야 함
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post(process.env.NEXT_PUBLIC_SIGNUP_API_URL, {
+        name : signupName,
+        birth : birth,
+        company : company,
+        job : job,
+        email : signupEmail,
+        password : confirmPassword
+      }, {
+        headers: { "Content-Type": "application/json" }
+      });
+      alert(lang == "en" ? "Sign Up Successful" : "회원가입에 성공했습니다");
+    } catch (error) {
+      console.error("회원가입 오류:", error);
+      if (error.response) {
+        console.error("서버 응답:", error.response.data);
+      }
+      alert(lang == "en" ? "Sign Up failed" : "회원가입에 실패했습니다");
+    }
+  };
+
+  const isSignupCK = signupName !== "" && birth !=="" && company !=="" && job !=="" && signupEmail !=="" && signupPassword !=="" && confirmPassword !=="" && signupEmailCK && birthCK && signupPasswordCK && confirmedPassword;
   
   if (lang === null) {
     return null; // 또는 로딩 스피너 넣기
@@ -64,6 +142,7 @@ export default function Home() {
   return (
     <div className={styles.wrapper}>
       {terms ? <Terms setTerms={setTerms}/> : null}
+      <div className={`${styles.wrongPassword} ${wrongPasswordPop ? styles.wrongPasswordOn : styles.wrongPasswordOff}`} onClick={()=>setWrongPasswordPop(!wrongPasswordPop)} style={lang == "en" ? {left:"1038px", top:"267px"} : {left:"1021px", top:"284px"}}>{lang == "en" ? langData.wrongPassword[0] : langData.wrongPassword[1]}</div>
       {
         logSign == "login" ?
         <div className={styles.loginPage}>
@@ -122,6 +201,45 @@ export default function Home() {
             <div>
               <div className={styles.loginEmailText}>{lang == "en" ? langData.signupName[0] : langData.signupName[1]}<span>*</span></div>
               <input type='text' value={signupName} onChange={(e)=>{setSignupName(e.target.value)}} className={styles.inputStyleSign}/>
+            </div>
+            <div>
+              <div className={styles.loginEmailText}>{lang == "en" ? langData.email[0] : langData.email[1]}<span>*</span></div>
+              <input type='text' value={signupEmail} onChange={handleEmailChange} className={`${styles.inputStyleSign} ${!signupEmailCK ? styles.wrongType : ""}`}/>
+            </div>
+            <div>
+              <div className={styles.loginEmailText}>{lang == "en" ? langData.birth[0] : langData.birth[1]}<span>*</span>
+                <div className={styles.birthEx}>{lang == "en" ? langData.birthEx[0] : langData.birthEx[1]}</div>
+              </div>
+              <input type='text' value={birth} onChange={handleBirthChange} className={`${styles.inputStyleSign} ${!birthCK ? styles.wrongType : ""}`}/>
+            </div>
+
+            <div>
+              <div className='flex flexAlignCenter posiRela'>
+                <div className={styles.loginEmailText}>{lang == "en" ? langData.password[0] : langData.password[1]}<span>*</span>
+                </div>
+                <img src='/wrongNofi.png' width="16" style={{marginLeft:"6px"}} onClick={()=>setWrongPasswordPop(!wrongPasswordPop)}/>
+              </div>
+              <input type='password' maxLength={16} value={signupPassword} onChange={handlePasswordChange} className={`${styles.inputStyleSign} ${!signupPasswordCK ? styles.wrongType : ""}`}/>
+            </div>
+            <div>
+              <div className={styles.loginEmailText}>{lang == "en" ? langData.company[0] : langData.company[1]}<span>*</span></div>
+              <input type='text' value={company} onChange={(e)=>{setCompany(e.target.value)}} className={styles.inputStyleSign}/>
+            </div>
+            <div>
+              <div className={styles.loginEmailText}>{lang == "en" ? langData.confirmPassword[0] : langData.confirmPassword[1]}<span>*</span>
+                <div className={styles.notMatch}>{confirmedPassword ? "" : lang == "en" ? "Do not match" : "비밀번호 불일치" }</div>
+              </div>
+              <input type='password' maxLength={16} value={confirmPassword} onChange={(e)=> setConfirmPassword(e.target.value)} className={`${styles.inputStyleSign} ${!confirmedPassword ? styles.wrongType : ""}`}/>
+            </div>
+            <div>
+              <div className={styles.loginEmailText}>{lang == "en" ? langData.job[0] : langData.job[1]}<span>*</span></div>
+              <input type='text' value={job} onChange={(e)=>{setJob(e.target.value)}} className={styles.inputStyleSign}/>
+            </div>
+            <div className={styles.signupForm}>
+              <div className='flex flexAlignCenter'>
+                <div className={styles.createAccount} onClick={()=>setLogSign("login")}>{lang == "en" ? langData.loginBtn[0] : langData.loginBtn[1]}</div>
+                <button className={`${styles.signupBtn} ${!isSignupCK ? styles.loginBtnDisabled : styles.loginBtnActive}`} disabled={!isSignupCK} onClick={handleRegister}>{lang == "en" ? langData.signupBtn[0] : langData.signupBtn[1]}</button>
+              </div>
             </div>
 
           </div>
