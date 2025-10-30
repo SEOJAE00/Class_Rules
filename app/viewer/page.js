@@ -1,14 +1,27 @@
 'use client'
 
-import { useState } from 'react'
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react'
 import langData from "../system/lang.json"
 import { useLang } from "../context/LangContext";
-
+import styles from "../css/viewer.module.css"
 
 export default function Viewer() {
-  
+
+  let router = useRouter();
+
   const { lang, toggleLang } = useLang();
-  
+
+  // 토큰이 없으면 바로 /로 이동
+  useEffect(() => {
+    if (lang === null) return;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert(lang == "en" ? "Login is required" : "로그인이 필요합니다");
+      router.replace("/");
+    }
+  }, [lang]);
+    
   if (lang === null) {
     return null; // 또는 로딩 스피너 넣기
   }
