@@ -74,7 +74,7 @@
   pointer-events: none;
 }
 .langBoxText2:hover {
-  background-color: #dddddd;
+  background-color: #E5F6FF;
   border-radius: 4px;
   transition: 0.3s;
 }
@@ -248,8 +248,6 @@
   background: #FFF;
   padding: 7px 11px;
   position: absolute;
-  /* left: 1037;
-  top: 267; */
   cursor: pointer;
   z-index: 999;
 }

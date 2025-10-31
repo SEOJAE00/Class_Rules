@@ -16,5 +16,11 @@
   "birth" : ["Date of Birth","생년월일"],
   "birthEx" : ["ex) 2000-01-01", "예시) 2000-01-01"],
   "company" : ["Company Name", "회사 이름"],
-  "job" : ["Job Title", "직책"]
+  "job" : ["Job Title", "직책"],
+  "shipNum" : ["Ship Number :", "호선 :"],
+  "newShip" : ["New one", "호선 만들기"],
+  "logout" : ["Logout", "로그아웃"],
+  "logoutAlert" : ["Logout Successful", "로그아웃 되었습니다"],
+  "advancedSearch" : ["Advanced Search", "상세검색"],
+  "searchPlace" : ["Search in All Documents", "모든 선급 기관에서 검색"]
 }

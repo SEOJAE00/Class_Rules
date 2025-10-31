@@ -1,0 +1,32 @@
+.viewerContainer {
+  width: 100%;
+  min-width: 1138px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.bodyWrapper {
+  min-height: 600px;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.leftBarWrapper {
+  min-width: 420px;
+  background: #eee;
+  border-right: 1px solid #ccc;
+}
+
+.centerBarWrapper {
+  flex: 1;
+  min-width: 250px;
+  background: #fff;
+}
+
+.rightBarWrapper {
+  min-width: 448px;
+  background: #fff;
+  border-left: 1px solid #ccc;
+}

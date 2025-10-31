@@ -8,6 +8,8 @@
 }
 
 html, body {
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
   font-family: var(--font-family-base);
@@ -18,6 +20,9 @@ div {
 
 .grayText {
   color: #555555;
+}
+.mainText {
+  color: #0066ff;
 }
 
 .wrapText {
@@ -45,17 +50,8 @@ div {
   font-weight: 300;
   line-height: 64px;
   letter-spacing: -1.2px;
+  cursor: pointer;
 }
 .login-logo span {
-  font-weight: 700;
-}
-
-.nomal-logo {
-  color: #0066ff;
-  font-size: 28px;
-  font-weight: 300;
-  letter-spacing: -0.56px;
-}
-.nomal-logo span {
   font-weight: 700;
 }
