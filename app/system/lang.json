@@ -22,5 +22,11 @@
   "logout" : ["Logout", "로그아웃"],
   "logoutAlert" : ["Logout Successful", "로그아웃 되었습니다"],
   "advancedSearch" : ["Advanced Search", "상세검색"],
-  "searchPlace" : ["Search in All Documents", "모든 선급 기관에서 검색"]
+  "searchPlace" : ["Search in All Documents", "모든 선급 기관에서 검색"],
+  "soci" : ["Classification Society", "선급 기관"],
+  "sociDes" : ["Choose A Classification Society First.", "선급 기관을 먼저 선택해주세요."],
+  "bookmark" : ["Bookmark", "북마크"],
+  "outline" : ["Outline", "목차"],
+  "nowSearch" : ["Keyword", "키워드 검색"],
+  "returnOutline" : ["← Return to table of contents", "← 문서 목차로 돌아가기"]
 }

@@ -6,7 +6,7 @@ import styles from "../css/header.module.css"
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData, advancedPop, setAdvancedPop} ) {
+export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData, advancedPop, setAdvancedPop, shipNumPop, setShipNumPop} ) {
 
   let router = useRouter();
 
@@ -67,7 +67,10 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
                   )
                 })
               }
-              <div className={styles.dropdownContents} onClick={()=> setShipInfoDropdown(!shipInfoDropdown)}>
+              <div className={styles.dropdownContents} onClick={()=> {
+                setShipInfoDropdown(!shipInfoDropdown);
+                setShipNumPop(!shipNumPop);
+                }}>
                 <span className='mainText'>{lang == "en" ? langData.newShip[0] : langData.newShip[1]}</span>
               </div>
             </div>

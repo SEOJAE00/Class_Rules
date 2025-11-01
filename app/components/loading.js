@@ -9,7 +9,7 @@ export default function Loading() {
 
   return (
     <div className={styles.back}>
-      <span style={{color:"white", fontSize:"40px", fontWeight:"500"}}>{lang == "en" ? "Loading..." : "로딩중..."}</span>
+      <span style={{color:"white", fontSize:"40px", fontWeight:"500", zIndex:"9999"}}>{lang == "en" ? "Loading..." : "로딩중..."}</span>
     </div>
   )
 }

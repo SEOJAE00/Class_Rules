@@ -57,6 +57,7 @@
   top: 41;
   right: 0;
   overflow-y: auto;
+  z-index: 9998;
 }
 .dropdownContents {
   width: 124;
