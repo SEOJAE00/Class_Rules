@@ -6,7 +6,7 @@ import styles from "../css/header.module.css"
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData, advancedPop, setAdvancedPop, shipNumPop, setShipNumPop} ) {
+export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData, advancedPop, setAdvancedPop, shipNumPop, setShipNumPop, setHtmlContent, setSelectedFile} ) {
 
   let router = useRouter();
 
@@ -50,7 +50,7 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
           <img src='/logo.png' width={142}></img>
           <div className='flex flexAlignCenter posiRela' style={{marginLeft:'40px'}}>
             <div className={styles.shipInfo}>{lang == "en" ? langData.shipNum[0] : langData.shipNum[1]}</div>
-            <div className={styles.shipInfoBox} onClick={()=>setShipInfoDropdown(!shipInfoDropdown)}>
+            <div className={styles.shipInfoBox} onClick={()=>{setShipInfoDropdown(!shipInfoDropdown)}}>
               <div className={styles.nowShipInfo}>
                 {shipInfo}
               </div>
@@ -61,7 +61,7 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
               {
                 testarr?.map((a, i)=>{
                   return (
-                    <div key={i} className={styles.dropdownContents} onClick={()=>{setShipInfo(a); setShipInfoDropdown(!shipInfoDropdown)}}>
+                    <div key={i} className={styles.dropdownContents} onClick={()=>{setShipInfo(a); setShipInfoDropdown(!shipInfoDropdown); setHtmlContent(''); setSelectedFile("")}}>
                       {a}
                     </div>
                   )

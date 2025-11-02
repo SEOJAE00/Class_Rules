@@ -1,0 +1,31 @@
+.folderWrapper {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 15px;
+  line-height: 20px;
+  color: #555;
+  font-weight: 500;
+}
+.textWrap {
+  width: 350px;
+}
+.textWrap2 {
+  width: 300px;
+}
+.fileWrapper {
+  width: 370px;
+  display: flex;
+  gap: 4px;
+  padding: 6px 0 6px 50px;
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 500;
+  margin-left: -40px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+.fileWrapper:hover {
+  background: #BCE9FF;
+  transition: 0.3s;
+}

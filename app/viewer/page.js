@@ -10,12 +10,17 @@ import AdvancedSearch from '../components/advancedSearch';
 import ShipNum from '../components/shipNum';
 import axios from 'axios';
 import FileTreeView from '../components/fileTreeView';
+import Loading from '../components/loading';
+import HtmlPopup from '../components/navigatePopup';
 
 export default function Viewer() {
 
   let router = useRouter();
 
   const { lang, toggleLang } = useLang();
+
+  // 로딩
+  let [loading, setLoading] = useState(false);
 
   // 토큰이 없으면 바로 /로 이동
   useEffect(() => {
@@ -40,10 +45,15 @@ export default function Viewer() {
   let [goSociNum, setGoSociNum] = useState(sociNum[0]);
   let [classSociColor, setClassSociColor] = useState(sociColor[0]);
   let [sociDropdownCK, setSociDropdownCK] = useState(false);
+  let [bookmark, setBookmark] = useState('');
+  let [updateDate, setUpdateDate] = useState('2025.05.15');
+
+  let isBookmarkHere = false;
 
   let [folderStructure, setFolderStructure] = useState([]);
   // 처음 랜딩 때 보여지는 선급
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       if (!token) {
@@ -63,7 +73,9 @@ export default function Viewer() {
         console.log(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
-      }
+      } finally {
+      setLoading(false);
+    }
     };
     fetchData();
 
@@ -72,6 +84,7 @@ export default function Viewer() {
 
   // 목차 불러오는 함수
   let handleSoci = async (apiPath, num) => {
+    setLoading(true);
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found in localStorage.");
@@ -89,9 +102,12 @@ export default function Viewer() {
       setGoSociNum(num); // 마지막으로 누른 버튼 값 설정
       setInputValue("");
       setHtmlContent('');
+      setFilePath('');
       console.log(folderStructure);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
 
     // + 호선 가져오는 기능 추가
@@ -105,20 +121,54 @@ export default function Viewer() {
   let [htmlContent, setHtmlContent] = useState('');
   let [htmlContents, setHtmlContents] = useState([]);
   let [currentIndex, setCurrentIndex] = useState(0);
+  let [navigateHtml, setNavigateHtml] = useState('');
+  let [isNavigateOpen, setNavigateOpen] = useState(false);
+
+  useEffect(() => {
+    window.setNavigateHtml = (value) => {
+      setNavigateHtml(value);
+      setNavigateOpen(true);
+    };
+  }, []);
+
+  let [filePath, setFilePath] = useState([]);
 
   // let partNumber = null;
   // let chapterNumber = null;
   // let sectionNumber = null;
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    document.body.appendChild(script);
+  }, [shipInfo, goSociNum]);
 
   // MathJax 수식 렌더링
   useEffect(() => {
     if (window.MathJax) {
       window.MathJax.typesetPromise();
     }
-  }, [htmlContent]);
+  }, [htmlContent, isNavigateOpen]);
+
+  let handleFilePath = (filePath) => {
+    let trimmed = filePath.replace(/^\/data\//, "");
+    trimmed = trimmed.replace(/\.html$/, "");
+    const parts = trimmed.split("/");
+    setFilePath(parts);
+  };
+
+  let [selectedFile, setSelectedFile] = useState(null);
+  let [dataList, setDataList] = useState([]);
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'auto' });
+    }
+  };
 
   // 파일 불러오기
   let handleFileClick = async (filePath) => {
+    setLoading(true);
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found in localStorage.");
@@ -156,14 +206,55 @@ export default function Viewer() {
         window.chapterNumber = chapterNumber;
         window.sectionNumber = sectionNumber;
       }
-
       console.log(formattedResult);
-      console.log(filePath); // 이거 저장해서 가져오기
+      handleFilePath(filePath);
+      setSelectedFile(filePath);
+      
       // HTML 내용 저장
       setHtmlContent(html);
     } catch (error) {
       console.error("Error fetching HTML content:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // html 내 계산 함수
+  const handleSubmit = (index) => {
+    const liElement = document.getElementById(`list-item-${index}`);
+    const inputElements = liElement.getElementsByTagName('input');
+    const inputValues = Array.from(inputElements).map(input => input.value);
+
+    // 입력 값이 있는 경우에만 해당 항목의 값을 변수로 만듭니다.
+    const submittedData = inputValues.reduce((acc, value, innerIndex) => {
+      if (value !== '') {
+        acc.push(`${encodeURIComponent(dataList[index][innerIndex + 1])}=${encodeURIComponent(value)}`);
+      }
+      return acc;
+    }, []);
+
+    // 각 항목의 값을 출력합니다.
+    console.log('Submitted dataList:', dataList[index][0], submittedData.join(', '));
+
+    // GET 요청을 보낼 URL 생성
+    const baseUrl = '/api/proxy/api/calc?parent=' + dataList[index][0];
+    const queryParams = submittedData.join('&');
+    const url = baseUrl + '&' + queryParams;
+
+    // GET 요청 보내기
+    axios.get(url)
+      .then(response => {
+        const mapEntries = Object.entries(response.data).map(([key, value]) => `${key}: ${value}`);
+        const alertMessage = mapEntries.join(`\n`);
+
+        // 응답 처리
+        console.log('Response:', response.data);
+        alert(alertMessage);
+      })
+      .catch(error => {
+        // 오류 처리
+        console.error('Error:', error);
+      });
   };
   
   // 북마크
@@ -198,13 +289,14 @@ export default function Viewer() {
 
   return (
     <div className={styles.viewerContainer}>
+      <div style={{zIndex:"9999"}}>{loading ? <Loading setLoading={setLoading}/> : null}</div>
       <div style={{zIndex:"9999"}}>
         {advancedPop ? <AdvancedSearch advancedPop={advancedPop} setAdvancedPop={setAdvancedPop}/> : null}
       </div>
       <div style={{zIndex:"9999"}}>
         {shipNumPop ? <ShipNum shipNumPop={shipNumPop} setShipNumPop={setShipNumPop}/> : null}
       </div>
-      <Header shipInfo={shipInfo} setShipInfo={setShipInfo} classSoci={classSoci} shipInfoData={shipInfoData} advancedPop={advancedPop} setAdvancedPop={setAdvancedPop} shipNumPop={shipNumPop} setShipNumPop={setShipNumPop}/>
+      <Header shipInfo={shipInfo} setShipInfo={setShipInfo} classSoci={classSoci} shipInfoData={shipInfoData} advancedPop={advancedPop} setAdvancedPop={setAdvancedPop} shipNumPop={shipNumPop} setShipNumPop={setShipNumPop} setHtmlContent={setHtmlContent} setSelectedFile={setSelectedFile}/>
       
       <div className={styles.bodyWrapper}>
 
@@ -277,7 +369,7 @@ export default function Viewer() {
                   <div>
                     {folderStructure.map((data, i)=>{
                       return (
-                        <FileTreeView data={data} key={i} onFileClick={handleFileClick}/>
+                        <FileTreeView data={data} key={i} onFileClick={handleFileClick} selectedFile={selectedFile}/>
                       )
                     })}
                   </div>
@@ -300,17 +392,34 @@ export default function Viewer() {
         </div>
 
         <div className={styles.centerBarWrapper}>
-          <div>
-            여기에 문서 경로 들어감
-          </div>
+          {isNavigateOpen && (
+            <HtmlPopup html={navigateHtml} isNavigateOpen={isNavigateOpen} setNavigateOpen={setNavigateOpen}></HtmlPopup>
+          )}
 
           {
             htmlContent == '' ? 
-            <div>
-              문서 선택해야함 - 한영 적용하기
+            <div className={styles.notHtmlYet}>
+              {lang == "en" ? langData.notHtml[0] : langData.notHtml[1]}
             </div> : 
-            <div>
-              <div className="col-span-2 bg-white p-4 rounded-lg shadow" style={{ overflowY: 'scroll' }} id="content">
+            <div className='flex' style={{flexDirection:"column"}}>
+              <div className={styles.filePathWrapper}>
+                <div>
+                  {filePath.map((part, index) => (
+                    <div key={index} className={styles.filePathText}>
+                      {part}
+                      {index < filePath.length - 1 && (
+                        <span style={{ margin: "0 4px" }}>{">"}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <img src='/copy.png' width="24" className='pointer' onClick={() => {
+                  const textToCopy = filePath.join(" > ");
+                  navigator.clipboard.writeText(textToCopy);
+                  alert(lang == "en" ? langData.copyPath[0] : langData.copyPath[1]);
+                }}/>
+              </div>
+              <div className={styles.htmlWrapper} style={{ overflowY: 'scroll' }} id="content">
                 {Object.keys(htmlContents).length > 1 && (
                   <div className="flex justify-center mt-4">
                     {Object.keys(htmlContents).map((key, index) => (
@@ -333,8 +442,64 @@ export default function Viewer() {
         </div>
 
         <div className={styles.rightBarWrapper}>
-          여기는 오른쪽
+          { htmlContent == '' ?
+            <div className={styles.notHtmlYet}>
+              {lang == "en" ? langData.notHtml[0] : langData.notHtml[1]}
+            </div> :
+            <div style={{marginBottom:"20px"}}>
+              <div className={styles.currentDocu}>
+                <div className={styles.currentText}>
+                  {lang == "en" ? langData.current[0] : langData.current[1]}
+                </div>
+                <div className={styles.rightIconWrapper}>
+                  <div className={styles.iconWrapper}>
+                    <img src='/download.png' height="22px"/>
+                    <div className={styles.iconText}>PDF</div>
+                  </div>
+                  <div className={styles.iconWrapper}>
+                    <img src='/history.png' height="22px"/>
+                    <div className={styles.iconText}>{lang == "en" ? "History" : "계산기록"}</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div style={{marginBottom:"20px"}}>
+                {
+                  !isBookmarkHere ? 
+                  <div className={styles.bookmarkWrapper}>
+                    <img src='/bookmark1.png' height="18px"/>
+                    <div className={styles.addBookmark}>
+                      {lang == "en" ? "Add Bookmark" : "북마크 추가"}
+                    </div>
+                  </div> :
+                  <div className={styles.bookmarkWrapper}>
+                    <img src='/bookmark2.png' height="18px"/>
+                    <div className={styles.removeBookmark}>
+                      {lang == "en" ? "Remove Bookmark" : "북마크 제거"}
+                    </div>
+                  </div> 
+                }
+              </div>
+              <div>
+                <div className={styles.updateText}>{lang == "en" ? langData.updateDate[0] : langData.updateDate[1]} {updateDate}</div>
+                <div style={{width:"398px"}}>
+                  {filePath}
+                </div>
+              </div>
+              <div>
+                memo
+              </div>
+            </div>
+          }
+          <div>
+            announcement
+          </div>
+          <div>
+            feedback
+          </div>
+
         </div>
+
       </div>
 
       

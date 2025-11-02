@@ -44,6 +44,10 @@ div {
   position: relative;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 .login-logo {
   color: #0066ff;
   font-size: 60px;

@@ -1,7 +1,7 @@
 {
   "login" : ["Log In to", "로그인"],
   "signup" : ["Sign Up to", "회원가입"],
-  "policy" : ["Policy·Terms Of Service", "사용약관 및 정책"],
+  "policy" : ["Policy·Terms Of Service", "약관 및 정책"],
   "loginDes" : ["Enter your Class Rules user details and \nStart managing Class Rules.", "Class Rules의 유저 정보를 입력하고 \n선급 규칙 관리를 시작해보세요."],
   "signupDes" : ["Become a member of Class Rules and \nStart managing Class Rules.", "Class Rules의 멤버가 되어 \n선급 규칙 관리를 시작해보세요."],
   "email" : ["Email", "이메일"],
@@ -28,5 +28,9 @@
   "bookmark" : ["Bookmark", "북마크"],
   "outline" : ["Outline", "목차"],
   "nowSearch" : ["Keyword", "키워드 검색"],
-  "returnOutline" : ["← Return to table of contents", "← 문서 목차로 돌아가기"]
+  "returnOutline" : ["← Return to table of contents", "← 문서 목차로 돌아가기"],
+  "copyPath" : ["Copied File Path", "파일 경로를 복사했습니다"],
+  "notHtml" : ["Please select a document first", "문서를 선택해주세요."],
+  "current" : ["Current Document", "현재 문서"],
+  "updateDate" : ["Edited on", "수정된 날짜"]
 }

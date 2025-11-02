@@ -7,9 +7,10 @@
 }
 .bodyWrapper {
   min-height: 600px;
-  flex: 1;
+  flex: 1;  
   display: flex;
   flex-direction: row;
+  overflow: hidden;
 }
 .leftBarWrapper {
   min-width: 420px;
@@ -18,16 +19,28 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
+  overflow: hidden;
 }
 .centerBarWrapper {
   flex: 1;
   min-width: 250px;
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+  scrollbar-width: none; /* ✅ Firefox */
+  -ms-overflow-style: none; /* ✅ IE, Edge */
+}
+.centerBarWrapper::-webkit-scrollbar {
+  display: none;
 }
 .rightBarWrapper {
   min-width: 448px;
   background: #fff;
   border-left: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  padding: 30px 30px 0 20px;
 }
 .leftBarsoci {
   margin: 30px 0 0 30px;
@@ -46,7 +59,7 @@
 .classSociWrapper {
   width: 370px;
   border: 1px solid #ccc;
-  background: #fefefe;
+  background: #fff;
   border-radius: 4px;
   cursor: pointer;
   display: flex;
@@ -105,6 +118,8 @@
   display: flex;
   flex-direction: column;
   margin-left: 30px;
+  height: 100%;
+  overflow: hidden;
 }
 .bookText {
   font-size: 20px;
@@ -164,24 +179,109 @@
   position: relative;
   overflow: hidden;
   width: 370px;
+  flex: 1;
 }
-
 .slider {
   display: flex;
   width: 200%;
   transition: 0.6s;
+  height: 100%;
 }
-
 .docuOutline {
-
-  overflow-y: scroll;
+  flex: 0 0 100%;
+  overflow-y: auto; /* ✅ 여기만 스크롤 */
+  min-height: 0; /* ✅ flex 내부 스크롤 버그 방지 */
 }
-
-.docuOutline,
 .searchOutline {
   flex: 0 0 100%;
+  overflow-y: auto;
+  min-height: 0;
 }
-
+.docuOutline,
+.searchOutline {
+  overflow-y: auto;
+  scrollbar-width: none; /* ✅ Firefox */
+  -ms-overflow-style: none; /* ✅ IE, Edge */
+}
+/* ✅ Chrome, Safari, Edge */
+.docuOutline::-webkit-scrollbar,
+.searchOutline::-webkit-scrollbar {
+  display: none;
+}
 .showSearch {
   transform: translateX(-100%);
+}
+
+.filePathText {
+  font-weight: 500;
+  display: inline;
+}
+.filePathWrapper {
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  padding: 30px 30px 20px 30px;
+  justify-content: space-between;
+  gap: 20px;
+  overflow: auto;
+}
+.htmlWrapper {
+  padding: 0px 20px 0 20px;
+  scrollbar-width: none; /* ✅ Firefox */
+  -ms-overflow-style: none; /* ✅ IE, Edge */
+}
+.htmlWrapper::-webkit-scrollbar {
+  display: none;
+}
+.notHtmlYet {
+  text-align: center;
+  margin-top: 300px;
+  color: #888;
+  font-weight: 500;
+}
+.currentText {
+  font-size: 20px;
+  font-weight: 600;
+}
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.iconText {
+  color: #555;
+  font-size: 15px;
+  font-weight: 500;
+}
+.rightIconWrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.currentDocu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.bookmarkWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: start;
+  cursor: pointer;
+}
+.addBookmark {
+  font-weight: 500;
+  color: #0066ff;
+}
+.removeBookmark {
+  font-weight: 500;
+  color: #555;
+}
+.updateText {
+  color: #888;
+  font-weight: 400;
+  margin-bottom: 10px;
 }

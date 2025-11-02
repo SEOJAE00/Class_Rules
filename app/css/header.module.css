@@ -2,7 +2,7 @@
   width: 100%;
   min-width: 1138px;
   height: 74px;
-  background: #fefefe;
+  background: #fff;
   border-bottom: 1px solid #ccc;
   display: flex;
   align-items: center;
@@ -58,6 +58,12 @@
   right: 0;
   overflow-y: auto;
   z-index: 9998;
+  /* ✅ 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE, Edge */
+}
+.dropdownForm::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 .dropdownContents {
   width: 124;
