@@ -10,3 +10,74 @@
   align-items: center;
   z-index: 999;
 }
+.shipNumWrapper {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 740px;
+  position: relative;
+  padding: 50px;
+}
+.closeIcon {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.ShipNumText {
+  font-size: 36px;
+  font-weight: 600;
+  color: #0066ff;
+  margin-bottom: 10px;
+}
+.ShipNumDes {
+  white-space: pre-line;
+  color: #555;
+  font-weight: 400;
+  line-height: 22px;
+}
+.newShipText {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.newShipText span {
+  color: #d00000;
+}
+.newShipNumInput {
+  width: calc(100% - 24px);
+  height: 44px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 16px;
+  padding-left: 20px;
+  transition: 0.3s;
+}
+.newShipNumInput:focus {
+  outline: none;
+  border: 1px solid #0066ff;
+  background: #f7fcff;
+  transition: 0.3s;
+}
+.submitWrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.closeText {
+  color: #888;
+  font-weight: 400;
+  cursor: pointer;
+}
+.makeBtn {
+  width: 98px;
+  height: 36px;
+  font-size: 16px;
+  border: none;
+  background: #e5f6ff;
+  color: #0066ff;
+  border-radius: 4px;
+  cursor: pointer;
+}

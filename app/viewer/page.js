@@ -12,6 +12,8 @@ import axios from 'axios';
 import FileTreeView from '../components/fileTreeView';
 import Loading from '../components/loading';
 import HtmlPopup from '../components/navigatePopup';
+import Terms from '../components/terms';
+import Feedback from '../components/feedback';
 
 export default function Viewer() {
 
@@ -21,6 +23,9 @@ export default function Viewer() {
 
   // 로딩
   let [loading, setLoading] = useState(false);
+
+  let [terms, setTerms] = useState(false);
+  let [feedback, setFeedback] = useState(false);
 
   // 토큰이 없으면 바로 /로 이동
   useEffect(() => {
@@ -132,6 +137,7 @@ export default function Viewer() {
   }, []);
 
   let [filePath, setFilePath] = useState([]);
+  let [currnetFilePath, setCurrentFilePath] = useState([]);
 
   // let partNumber = null;
   // let chapterNumber = null;
@@ -154,6 +160,9 @@ export default function Viewer() {
     trimmed = trimmed.replace(/\.html$/, "");
     const parts = trimmed.split("/");
     setFilePath(parts);
+
+    const lastTwo = parts.slice(-2);
+    setCurrentFilePath(lastTwo);
   };
 
   let [selectedFile, setSelectedFile] = useState(null);
@@ -207,9 +216,10 @@ export default function Viewer() {
         window.sectionNumber = sectionNumber;
       }
       console.log(formattedResult);
+      console.log(filePath);
       handleFilePath(filePath);
       setSelectedFile(filePath);
-      
+
       // HTML 내용 저장
       setHtmlContent(html);
     } catch (error) {
@@ -278,6 +288,16 @@ export default function Viewer() {
     }
   };
 
+  let [memo, setMemo] = useState('');
+
+  let handleDeleteMemo = () => {
+
+  };
+
+  let handleSubmitMemo = () => {
+
+  };
+
   // 상세검색 팝업
   let [advancedPop, setAdvancedPop] = useState(false);
   // 호선 팝업
@@ -289,6 +309,8 @@ export default function Viewer() {
 
   return (
     <div className={styles.viewerContainer}>
+      <div style={{zIndex:"9999"}}>{feedback ? <Feedback setFeedback={setFeedback}/> : null}</div>
+      <div style={{zIndex:"9999"}}>{terms ? <Terms setTerms={setTerms}/> : null}</div>
       <div style={{zIndex:"9999"}}>{loading ? <Loading setLoading={setLoading}/> : null}</div>
       <div style={{zIndex:"9999"}}>
         {advancedPop ? <AdvancedSearch advancedPop={advancedPop} setAdvancedPop={setAdvancedPop}/> : null}
@@ -398,7 +420,7 @@ export default function Viewer() {
 
           {
             htmlContent == '' ? 
-            <div className={styles.notHtmlYet}>
+            <div className={styles.notHtmlYet} style={{paddingTop:"30px"}}>
               {lang == "en" ? langData.notHtml[0] : langData.notHtml[1]}
             </div> : 
             <div className='flex' style={{flexDirection:"column"}}>
@@ -446,7 +468,7 @@ export default function Viewer() {
             <div className={styles.notHtmlYet}>
               {lang == "en" ? langData.notHtml[0] : langData.notHtml[1]}
             </div> :
-            <div style={{marginBottom:"20px"}}>
+            <div style={{marginBottom:"20px", paddingLeft:"20px"}}>
               <div className={styles.currentDocu}>
                 <div className={styles.currentText}>
                   {lang == "en" ? langData.current[0] : langData.current[1]}
@@ -463,16 +485,16 @@ export default function Viewer() {
                 </div>
               </div>
               
-              <div style={{marginBottom:"20px"}}>
+              <div style={{marginBottom:"20px", display:"inline-block"}}>
                 {
                   !isBookmarkHere ? 
-                  <div className={styles.bookmarkWrapper}>
+                  <div className={styles.bookmarkWrapper2}>
                     <img src='/bookmark1.png' height="18px"/>
                     <div className={styles.addBookmark}>
                       {lang == "en" ? "Add Bookmark" : "북마크 추가"}
                     </div>
                   </div> :
-                  <div className={styles.bookmarkWrapper}>
+                  <div className={styles.bookmarkWrapper2}>
                     <img src='/bookmark2.png' height="18px"/>
                     <div className={styles.removeBookmark}>
                       {lang == "en" ? "Remove Bookmark" : "북마크 제거"}
@@ -480,22 +502,49 @@ export default function Viewer() {
                   </div> 
                 }
               </div>
-              <div>
+              <div style={{marginBottom:"20px"}}>
                 <div className={styles.updateText}>{lang == "en" ? langData.updateDate[0] : langData.updateDate[1]} {updateDate}</div>
-                <div style={{width:"398px"}}>
-                  {filePath}
+                <div className={styles.currentPath}>
+                  {currnetFilePath.map((a, i) => {
+                    return (
+                      <div key={i}>{a}</div>
+                    )
+                  })}
                 </div>
               </div>
               <div>
-                memo
+                <div className={styles.memoText}>
+                  {lang == "en" ? langData.memo[0] : langData.memo[1]}
+                </div>
+                <div className='flex' style={{flexDirection:"column", alignItems:"flex-end"}}>
+                  <div>
+                    <textarea className={styles.memoInput} placeholder={lang == "en" ? langData.memoPlace[0] : langData.memoPlace[1]} value={memo} type='text' onChange={(e)=>{setMemo(e.target.value)}}/>
+                  </div>
+                  <div className={styles.memoWrapper}>
+                    <div className={styles.deleteMemoText} onClick={handleDeleteMemo}>{lang == "en" ? langData.deleteMemo[0] : langData.deleteMemo[1]}</div>
+                    <button className={styles.memoBtn} onClick={handleSubmitMemo}>
+                      {lang == "en" ? "Save" : "저장"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           }
-          <div>
-            announcement
+          <div className={styles.announceWrapper}>
+            <div className={styles.nofiText}>
+              {lang == "en" ? "Announcement" : "공지사항"}
+            </div>
+            <div className={styles.announceText}>
+              {lang == "en" ? langData.announce[0] : langData.announce[1]}
+            </div>
+            <div className={styles.policyWrapper} onClick={()=>{setTerms(!terms)}}>
+              <div style={{color:"#0066ff"}}>{lang == "en" ? langData.policy[0] : langData.policy[1]}</div>
+              <div>|</div>
+              <div>ⓒ Class Rules</div>
+            </div>
           </div>
-          <div>
-            feedback
+          <div className={styles.feedback} onClick={()=>{setFeedback(!feedback)}}>
+            {lang == "en" ? langData.feedback[0] : langData.feedback[1]}
           </div>
 
         </div>

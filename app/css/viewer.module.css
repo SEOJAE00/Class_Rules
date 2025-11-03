@@ -40,7 +40,7 @@
   border-left: 1px solid #ccc;
   display: flex;
   flex-direction: column;
-  padding: 30px 30px 0 20px;
+  padding: 30px 30px 0 0;
 }
 .leftBarsoci {
   margin: 30px 0 0 30px;
@@ -235,9 +235,10 @@
 }
 .notHtmlYet {
   text-align: center;
-  margin-top: 300px;
+  margin-top: 70px;
   color: #888;
   font-weight: 500;
+  margin-bottom: 100px;  
 }
 .currentText {
   font-size: 20px;
@@ -265,7 +266,7 @@
   justify-content: space-between;
   margin-bottom: 14px;
 }
-.bookmarkWrapper {
+.bookmarkWrapper2 {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -284,4 +285,105 @@
   color: #888;
   font-weight: 400;
   margin-bottom: 10px;
+}
+.currentPath {
+  width: 398px;
+  color: #555;
+  font-weight: 500;
+  line-height: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.memoText {
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.memoInput {
+  padding: 20px;
+  width: 358px;
+  height: 125px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-weight: 400;
+  font-size: 16px;
+  transition: 0.4s;
+  font-family: 'Pretendard', sans-serif;
+  resize: none;
+}
+.memoInput:focus {
+  outline: none;
+  background: #f7fcff;
+  border: 1px solid #0066ff;
+  transition: 0.3s;
+}
+.memoWrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 4px;
+}
+.deleteMemoText {
+  color: #D00000;
+  font-weight: 400;
+  cursor: pointer;
+}
+.memoBtn {
+  border: none;
+  width: 68px;
+  height: 32px;
+  background: #e5f6ff;
+  border-radius: 4px;
+  font-size: 16px;
+  color: #0066ff;
+  cursor: pointer;
+}
+.nofiText {
+  font-size: 20px;
+  font-weight: 600;
+}
+.announceWrapper {
+  border: 1px solid #ccc;
+  background: #eee;
+  border-radius: 4px;
+  width: 398px;
+  flex: 1;
+  padding: 20px;
+  position: relative;
+  margin: 0 0 20px 20px;
+}
+.announceText {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); /* 가로+세로 중앙 */
+  text-align: center;
+  color: #888;
+  font-weight: 400;
+}
+.policyWrapper {
+  display: flex;
+  gap: 6px;
+  position: absolute;
+  font-size: 14px;
+  color: #555;
+  font-weight: 400;
+  cursor: pointer;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
+}
+.feedback {
+  width: calc(100% + 30px);
+  padding: 20px;
+  color: #0066ff;
+  font-size: 18px;
+  font-weight: 400;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  cursor: pointer;
 }

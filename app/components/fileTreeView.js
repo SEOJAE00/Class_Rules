@@ -15,7 +15,7 @@ export default function FileTreeView({ data, onFileClick, level = 0, isLastFile 
         if (data.type === "file") {
             onFileClick(data.path); // 클릭 시 부모의 state를 업데이트
         }
-        console.log(data.path)
+        //console.log(data.path)
     };
 
     // 6. isSelected 로직 수정:
