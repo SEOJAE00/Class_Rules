@@ -14,7 +14,7 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
 
   let [shipInfoDropdown, setShipInfoDropdown] = useState(false);
 
-  let testarr = ["12312312", "4522", "76867876675", "aegkhjasdasd", "dagfhis", "safasd"];
+  let testarr = ["12312314", "4522", "76867876", "aegkhjas", "dagfhis", "safasd"];
 
   // 로그아웃 함수
   let handleLogout = () => {
@@ -54,7 +54,7 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
               <div className={styles.nowShipInfo}>
                 {shipInfo}
               </div>
-              <div className={styles.langBoxArrow}>▼</div>
+              <div className={styles.langBoxArrow}><img src='/down.png' height={16}/></div>
             </div>
             <div className={`${styles.dropdownForm} ${shipInfoDropdown ? styles.dropdownShow : styles.dropdownHidden}`}>
               

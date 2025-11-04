@@ -67,7 +67,7 @@ export default function Viewer() {
       }
 
       try {
-        const response = await axios.get(process.env.NEXT_PUBLIC_OUTLINE_API_URL, {
+        const response = await axios.get("/api/proxy/api/outlines", {
           params: { path: goSociAPI },
           headers: {
             "Authorization": `Bearer ${token}`,
@@ -96,7 +96,7 @@ export default function Viewer() {
       return;
     }
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_OUTLINE_API_URL, {
+      const response = await axios.get("/api/proxy/api/outlines", {
         params: { path: apiPath },
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -145,6 +145,111 @@ export default function Viewer() {
 
   useEffect(() => {
     const script = document.createElement('script');
+    script.innerHTML = `
+      function handleSubmit(value) {
+        const inputs = document.querySelectorAll(\`\\.list-item-\${value}\`);
+        let requestUrl = \`/api/proxy/api/calc?company=${goSociNum}&shipInfo=${shipInfo}&parent=\${value}\`;
+  
+        inputs.forEach((input, index) => {
+          if (input.value.trim() !== '') {
+            // requestUrl += \`&\${input.id}=\${input.value.trim()}\`;
+          const encodedKey = encodeURIComponent(input.id);   // 키(URL 파라미터 이름) 인코딩
+          const escapedKey = CSS.escape(input.id);
+          const encodedValue = encodeURIComponent(input.value.trim()); // 값(URL 파라미터 값) 인코딩
+          requestUrl += \`&\${encodedKey}=\${encodedValue}\`;
+          
+          const inputElements = document.querySelectorAll(\`\#\${escapedKey}\`);
+          inputElements.forEach((inputElement) => {
+            if (inputElement.tagName === 'INPUT') {
+              inputElement.value = input.value.trim();
+            }
+          });
+          }
+        });
+  
+        const token = localStorage.getItem("token"); // 토큰을 로컬 스토리지에서 가져옴
+        fetch(requestUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + token, // Authorization 헤더에 토큰 포함
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(\`HTTPS error! status: \${response.status}\`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log('Received data:', data);
+          alert(Object.keys(data) + ' = ' + Object.values(data));
+  
+          Object.entries(data).forEach(([key, value]) => {
+            const escapedKey = key.replace(/\{/g, '\\\\7B ').replace(/\}/g, '\\\\7D ');
+            const inputElements = document.querySelectorAll(\`\#\${escapedKey}\`);
+            inputElements.forEach((inputElement) => {
+              if (inputElement.tagName === 'INPUT') {
+                inputElement.value = value;
+              }
+            });
+          });
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      }
+
+      function myNavigator(value) {
+	      event.preventDefault(); // 기본 링크 동작을 막습니다.
+
+        let [partValue, chapterValue, sectionValue] = value.split("_");
+
+        if (partValue === "0") {
+          partValue = window.partNumber;
+        }
+        if (chapterValue === "0") {
+          chapterValue = window.chapterNumber;
+        }
+        if (sectionValue === "0") {
+          sectionValue = window.sectionNumber;
+        }
+
+        value = \`\${partValue}_\${chapterValue}_\${sectionValue}\`;
+
+        let requestUrl = \`/api/proxy/api/navigator?company=${goSociNum}&documentInfo=\${value}\`;
+        const token = localStorage.getItem("token"); // 토큰을 로컬 스토리지에서 가져옴
+        fetch(requestUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + token, // Authorization 헤더에 토큰 포함
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => {
+        if (!response.ok) {
+          throw new Error("Failed to fetch HTML content. Please check authentication.");
+        }
+        return response.text();
+        })
+        .then((data) => {
+          window.setNavigateHtml(data); // React 상태 변경
+          console.log("API 요청");
+        })
+        .catch(error => console.error("Error fetching HTML content:", error));
+      }
+
+      function handleFocus(inputId) {
+        const el = document.querySelector(\`[id="\${inputId}"].disabled-style\`);
+        console.log(inputId);
+        console.log(el);
+        if (el && el.classList.contains('disabled-style')) {
+          el.focus();
+        } else {
+          console.error('해당 id와 클래스를 가진 요소를 찾을 수 없습니다.');
+          }
+      }
+    `;
     document.body.appendChild(script);
   }, [shipInfo, goSociNum]);
 
@@ -186,7 +291,7 @@ export default function Viewer() {
 
     try {
       // HTML 파일 내용 요청
-      const response = await axios.get(process.env.NEXT_PUBLIC_HTML_API_URL, {
+      const response = await axios.get("/api/proxy/api/html", {
         params: { path: filePath },
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -227,7 +332,75 @@ export default function Viewer() {
     } finally {
       setLoading(false);
     }
+
+    // 이전의 계산 기록 요청
+    fetch(`/api/proxy/api/calculation-log?shipInfo=${shipInfo}&info=${goSociNum}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`, // 토큰을 Authorization 헤더에 추가
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json(); // JSON 응답으로 변환
+      })
+      .then(data => {
+        console.log("Response Data:", data); // 응답 데이터 처리
+        data.forEach(item => {
+          // `input`과 `result`를 `{key=value}` 형식으로 파싱
+          const inputPairs = item.input ? item.input.replace(/[{}]/g, '').split(', ') : [];
+          const resultPairs = item.result ? item.result.replace(/[{}]/g, '').split(', ') : [];
+
+          // input과 result의 key-value 쌍을 하나의 배열로 병합
+          const pairs = [...inputPairs, ...resultPairs];
+
+          pairs.forEach(pair => {
+            const [key, value] = pair.split('=');
+
+            if (key && value) {
+              const escapedKey = key.trim().replace(/\{/g, '\\\\7B').replace(/\}/g, '\\\\7D');
+              const inputElements = document.querySelectorAll(`#${escapedKey}`);
+
+              inputElements.forEach(inputElement => {
+                if (inputElement.tagName === 'INPUT') {
+                  inputElement.value = value.trim();
+                }
+              });
+            }
+          });
+        });
+        //alert(`${shipInfo}의 계산 기록 ${data.length}건을 불러왔습니다.`)
+      })
+      .catch(error => {
+        console.error("There was a problem with the fetch operation:", error);
+      });
   };
+
+    const handleDownload = () => {
+    // 로컬 스토리지에서 토큰 가져오기
+      const token = localStorage.getItem("token");
+
+      // 이전의 계산 기록 요청
+      fetch(`/api/proxy/api/download-log?shipInfo=${shipInfo}&info=${goSociNum}`, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`, // 토큰을 Authorization 헤더에 추가
+        },
+      })
+        .then(response => response.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = 'data.xlsx';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+    }
 
   // html 내 계산 함수
   const handleSubmit = (index) => {
@@ -414,10 +587,11 @@ export default function Viewer() {
         </div>
 
         <div className={styles.centerBarWrapper}>
-          {isNavigateOpen && (
-            <HtmlPopup html={navigateHtml} isNavigateOpen={isNavigateOpen} setNavigateOpen={setNavigateOpen}></HtmlPopup>
-          )}
-
+          <div>
+            {isNavigateOpen && (
+              <HtmlPopup html={navigateHtml} isNavigateOpen={isNavigateOpen} setNavigateOpen={setNavigateOpen}></HtmlPopup>
+            )}
+          </div>
           {
             htmlContent == '' ? 
             <div className={styles.notHtmlYet} style={{paddingTop:"30px"}}>
@@ -478,7 +652,7 @@ export default function Viewer() {
                     <img src='/download.png' height="22px"/>
                     <div className={styles.iconText}>PDF</div>
                   </div>
-                  <div className={styles.iconWrapper}>
+                  <div className={styles.iconWrapper} onClick={handleDownload}>
                     <img src='/history.png' height="22px"/>
                     <div className={styles.iconText}>{lang == "en" ? "History" : "계산기록"}</div>
                   </div>

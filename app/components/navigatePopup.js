@@ -5,6 +5,10 @@ import Modal from "react-modal";
 
 // Modal 스타일 설정
 const customStyles = {
+    overlay: {
+        zIndex: 99999,
+        backgroundColor: "rgba(0,0,0,0.6)"
+    },
     content: {
         top: "50%",
         left: "50%",

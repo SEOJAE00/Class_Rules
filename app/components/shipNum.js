@@ -38,7 +38,7 @@ export default function ShipNum({shipNumPop, setShipNumPop}) {
         </div>
         <div className={styles.submitWrapper}>
           <div className={styles.closeText} onClick={()=>{setShipNumPop(false)}}>{lang == "en" ? "Close" : "닫기"}</div>
-          <button className={styles.makeBtn} onClick={handleNewShipNum}>{lang == "en" ? "Make" : "만들기"}</button>
+          <button className={styles.makeBtn} onClick={handleNewShipNum}>{lang == "en" ? "Register" : "등록"}</button>
         </div>
 
       </div>

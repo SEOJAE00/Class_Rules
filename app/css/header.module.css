@@ -30,6 +30,7 @@
   margin-left: 10px;
   gap: 6px;
   justify-content: space-between;
+  position: relative;
 }
 .shipInfo {
   color: #555;
@@ -37,8 +38,9 @@
   white-space: nowrap;
 }
 .langBoxArrow {
-  font-size: 11px;
-  font-weight: 500;
+  position: absolute;
+  right: 12px;
+  top: 8px;
 }
 .nowShipInfo {
   font-weight: 500;

@@ -10,3 +10,80 @@
   align-items: center;
   z-index: 999;
 }
+.termsWrapper {
+  width: 1024px;
+  padding: 50px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  position: relative;
+  height: 90%;
+  max-height: 964px;
+  display: flex;
+  flex-direction: column;
+}
+.closeIcon {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.policyText {
+  font-size: 32px;
+  font-weight: 600;
+  color: #0066ff;
+  margin-bottom: 6px;
+}
+.termsDate {
+  color: #555;
+  font-size: 14px;
+  font-weight: 400;
+}
+.termsContentWrapper {
+  width: 924px;
+  max-height: 964px;
+  overflow-y: scroll;
+  font-size: 15px;
+  flex: 1;
+  padding-right: 10px;
+}
+/* 스크롤바 전체 */
+.termsContentWrapper::-webkit-scrollbar {
+  width: 4px;          /* 세로 스크롤바 두께 */
+  height: 4px;         /* 가로 스크롤바 두께 */
+}
+
+/* 스크롤바 막대 */
+.termsContentWrapper::-webkit-scrollbar-thumb {
+  background-color: #0066ff; /* 색상 */
+  border-radius: 4px;        /* 둥근 모서리 */
+}
+
+/* 스크롤바 트랙 */
+.termsContentWrapper::-webkit-scrollbar-track {
+  background: transparent;  /* 트랙 배경 */
+}
+.submitWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.makeBtn {
+  width: 98px;
+  height: 36px;
+  font-size: 16px;
+  border: none;
+  background: #e5f6ff;
+  color: #0066ff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.mediumBlack {
+  font-weight: 500;
+  color: #000;
+}
+.bigTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}

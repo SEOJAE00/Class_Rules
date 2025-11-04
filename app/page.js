@@ -52,7 +52,7 @@ export default function Home() {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(process.env.NEXT_PUBLIC_LOGIN_API_URL, {
+      const response = await axios.post("/api/proxy/api/auth/login", {
         email : loginEmail,
         password : loginPassword,
       }, {
@@ -102,7 +102,7 @@ export default function Home() {
       value = value.slice(0, 4) + "-" + value.slice(4, 6) + "-" + value.slice(6, 8);
     }
     setBirth(value);
-    const regex = /^(19|20)\d{2}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
+    const regex = /^(19(2[5-9]|[3-9]\d)|20(0\d|1\d|2[0-5]))-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
     setBirthCK(regex.test(value) || value === "");
   };
   
@@ -123,7 +123,7 @@ export default function Home() {
   const handleRegister = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(process.env.NEXT_PUBLIC_SIGNUP_API_URL, {
+      const response = await axios.post("/api/proxy/api/auth/register", {
         name : signupName,
         birth : birth,
         company : company,
@@ -168,7 +168,7 @@ export default function Home() {
             <div className={styles.langWrap}>
               <div onClick={langBoxForm} className={langBoxCK == false ? styles.changeLangBox : styles.changeLangBox2}>
                 <div className={styles.langBoxText}>{lang == "en" ? "English" : "한국어"}</div>
-                <div className={styles.langBoxArrow}>▼</div>
+                <div className={styles.langBoxArrow}><img src='/down.png' height={16}/></div>
                 <div onClick={toggleLang} className={`${styles.langBoxText2} ${!langBoxCK ? styles.active : ""}`}><span>{lang == "en" ? "한국어" : "English"}</span></div>
               </div>
               <div className={styles.terms} onClick={()=>{setTerms(true)}}>{lang == "en" ? langData.policy[0] : langData.policy[1]}</div>
@@ -204,7 +204,7 @@ export default function Home() {
             <div className={styles.langWrap}>
               <div onClick={langBoxForm} className={langBoxCK == false ? styles.changeLangBox : styles.changeLangBox2}>
                 <div className={styles.langBoxText}>{lang == "en" ? "English" : "한국어"}</div>
-                <div className={styles.langBoxArrow}>▼</div>
+                <div className={styles.langBoxArrow}><img src='/down.png' height={16}/></div>
                 <div onClick={toggleLang} className={`${styles.langBoxText2} ${!langBoxCK ? styles.active : ""}`}><span>{lang == "en" ? "한국어" : "English"}</span></div>
               </div>
               <div className={styles.terms} onClick={()=>{setTerms(true)}}>{lang == "en" ? langData.policy[0] : langData.policy[1]}</div>
