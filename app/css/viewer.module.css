@@ -77,6 +77,15 @@
   font-weight: 600;
   margin-left: 10px;
 }
+.sociTextWrapper2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sociText2 {
+  font-size: 14px;
+  font-weight: 500;
+}
 .selectSoci {
   width: 368px;
   height: 48px;

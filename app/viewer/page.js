@@ -39,7 +39,7 @@ export default function Viewer() {
 
   // 호선 관련
   let [shipInfo, setShipInfo] = useState("--------");
-  let [shipInfoData, setShipInfoData] = useState();
+  let [shipInfoData, setShipInfoData] = useState([]);
   // 선택된 선급 기관 관련
   let soci = ["KOREAN REGISTER(en)", "KOREAN REGISTER(kr)", "American Bureau of Shipping", "BUREAU VERITAS", "Det Norske Veritas", "Lloyd's Register", "Nippon Kaiji Kyokai"];
   let sociColor = ["#0085ca", "#0085ca", "#0e294c", "#7e190c", "#0f214a", "#00a99d", "#2d5ea3"];
@@ -50,10 +50,13 @@ export default function Viewer() {
   let [goSociNum, setGoSociNum] = useState(sociNum[0]);
   let [classSociColor, setClassSociColor] = useState(sociColor[0]);
   let [sociDropdownCK, setSociDropdownCK] = useState(false);
-  let [bookmark, setBookmark] = useState('');
+  let [bookmark, setBookmark] = useState([]);
   let [updateDate, setUpdateDate] = useState('2025.05.15');
+  let [selectedFile, setSelectedFile] = useState(null);
 
-  let isBookmarkHere = false;
+  const isBookmarkHere = bookmark.some(bookmark =>
+    bookmark.fileDetails.some(file => file.filePath === selectedFile)
+  );
 
   let [folderStructure, setFolderStructure] = useState([]);
   // 처음 랜딩 때 보여지는 선급
@@ -84,6 +87,8 @@ export default function Viewer() {
     };
     fetchData();
 
+    fetchShips();
+    fetchBookmark();
     // + 북마크 가져오는 거 추가, + 호선 가져오는 거 추가
   }, []);
 
@@ -105,6 +110,7 @@ export default function Viewer() {
       });
       setFolderStructure(response.data);
       setGoSociNum(num); // 마지막으로 누른 버튼 값 설정
+      setShipInfo("--------");
       setInputValue("");
       setHtmlContent('');
       setFilePath('');
@@ -118,6 +124,53 @@ export default function Viewer() {
     // + 호선 가져오는 기능 추가
   };
 
+  const fetchShips = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in localStorage.");
+        return;
+      }
+
+      const response = await axios.get("/api/proxy/api/ship", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      setShipInfoData(response.data);
+      console.log("Ships:", response.data);
+    } catch (error) {
+      console.error("Error fetching ship list:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const fetchBookmark = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in localStorage.");
+        return;
+      }
+
+      const response = await axios.get("/api/proxy/api/bookmark", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      setBookmark(response.data);
+      console.log("Bookmark:", response.data);
+    } catch (error) {
+      console.error("Error fetching ship list:", error);
+    }
+  }
+
   const resetState = () => {
     setHtmlContents([]);
     setCurrentIndex(0);
@@ -128,6 +181,7 @@ export default function Viewer() {
   let [currentIndex, setCurrentIndex] = useState(0);
   let [navigateHtml, setNavigateHtml] = useState('');
   let [isNavigateOpen, setNavigateOpen] = useState(false);
+  let [memo, setMemo] = useState('');
 
   useEffect(() => {
     window.setNavigateHtml = (value) => {
@@ -142,6 +196,56 @@ export default function Viewer() {
   // let partNumber = null;
   // let chapterNumber = null;
   // let sectionNumber = null;
+
+  let handleBookmarkAdd = async () => {
+    try {
+      const token = localStorage.getItem("token"); // 토큰 가져오기
+      const response = await axios.post(
+        "/api/proxy/api/bookmark",
+        {
+          shipClass: goSociNum,
+          filePath: selectedFile,
+        },
+        {
+          headers: { 
+            "Authorization": `Bearer ${token}`, 
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      fetchBookmark();
+    } catch (error) {
+      console.error("북마크 등록 오류:", error);
+      if (error.response) {
+        console.error("서버 응답:", error.response.data);
+      }
+      alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
+    }
+  };
+  let handleBookmarkRemove = async () => {
+    try {
+      const token = localStorage.getItem("token"); // 토큰 가져오기
+      const response = await axios.delete(
+        "/api/proxy/api/bookmark",
+        {
+          filePath: selectedFile
+        },
+        {
+          headers: { 
+            "Authorization": `Bearer ${token}`, 
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      fetchBookmark();
+    } catch (error) {
+      console.error("북마크 등록 오류:", error);
+      if (error.response) {
+        console.error("서버 응답:", error.response.data);
+      }
+      alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
+    }
+  };
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -270,7 +374,6 @@ export default function Viewer() {
     setCurrentFilePath(lastTwo);
   };
 
-  let [selectedFile, setSelectedFile] = useState(null);
   let [dataList, setDataList] = useState([]);
 
   const scrollToSection = (id) => {
@@ -461,9 +564,7 @@ export default function Viewer() {
     }
   };
 
-  let [memo, setMemo] = useState('');
-
-  let handleDeleteMemo = () => {
+  let handleDeleteMemo =  async () => {
 
   };
 
@@ -489,9 +590,9 @@ export default function Viewer() {
         {advancedPop ? <AdvancedSearch advancedPop={advancedPop} setAdvancedPop={setAdvancedPop}/> : null}
       </div>
       <div style={{zIndex:"9999"}}>
-        {shipNumPop ? <ShipNum shipNumPop={shipNumPop} setShipNumPop={setShipNumPop}/> : null}
+        {shipNumPop ? <ShipNum shipNumPop={shipNumPop} setShipNumPop={setShipNumPop} goSociNum={goSociNum} fetchShips={fetchShips}/> : null}
       </div>
-      <Header shipInfo={shipInfo} setShipInfo={setShipInfo} classSoci={classSoci} shipInfoData={shipInfoData} advancedPop={advancedPop} setAdvancedPop={setAdvancedPop} shipNumPop={shipNumPop} setShipNumPop={setShipNumPop} setHtmlContent={setHtmlContent} setSelectedFile={setSelectedFile}/>
+      <Header shipInfo={shipInfo} setShipInfo={setShipInfo} classSoci={classSoci} shipInfoData={shipInfoData} advancedPop={advancedPop} setAdvancedPop={setAdvancedPop} shipNumPop={shipNumPop} setShipNumPop={setShipNumPop} setHtmlContent={setHtmlContent} setSelectedFile={setSelectedFile} goSociNum={goSociNum}/>
       
       <div className={styles.bodyWrapper}>
 
@@ -543,10 +644,43 @@ export default function Viewer() {
               <img src='/showBook.png' height="22px" style={{cursor:"pointer"}} onClick={()=>setBookmarkCK(!bookmarkCK)}/>
             </div>
             <div className={bookmarkCK ? styles.bookmarkActive : styles.bookmarkDisable}>
-              <div>북마크1</div>
-              <div>북마크2</div>
-              <div>북마크3</div>
-              <div>북마크4</div>
+              {
+                bookmark.map((a, i) => {
+                  const sociIndex = sociNum.indexOf(Number(a.shipClass));
+                  const sociName = soci[sociIndex];
+                  const sociColorValue = sociColor[sociIndex];
+
+                  // 마지막 요소인지 확인
+                  const isLast = i === bookmark.length - 1;
+
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        marginBottom: isLast ? '0px' : '20px', // 마지막만 0px
+                      }}
+                    >
+                      <div className={styles.sociTextWrapper2}>
+                        <img src={`/sociCover/${sociName}.png`} height={17}/>
+                        <div className={styles.sociText2} style={{ color: sociColorValue }}>
+                          {sociName}
+                        </div>
+                      </div>
+                      <div>
+                        {
+                          a.fileDetails.map((a, i)=>{
+                            return (
+                              <div key={i}>
+                                {a.title}
+                              </div>
+                            )
+                          })
+                        }
+                      </div>
+                    </div>
+                  );
+                })
+              }
             </div>
           </div>
 
@@ -662,13 +796,13 @@ export default function Viewer() {
               <div style={{marginBottom:"20px", display:"inline-block"}}>
                 {
                   !isBookmarkHere ? 
-                  <div className={styles.bookmarkWrapper2}>
+                  <div className={styles.bookmarkWrapper2} onClick={handleBookmarkAdd}>
                     <img src='/bookmark1.png' height="18px"/>
                     <div className={styles.addBookmark}>
                       {lang == "en" ? "Add Bookmark" : "북마크 추가"}
                     </div>
                   </div> :
-                  <div className={styles.bookmarkWrapper2}>
+                  <div className={styles.bookmarkWrapper2} onClick={handleBookmarkRemove}>
                     <img src='/bookmark2.png' height="18px"/>
                     <div className={styles.removeBookmark}>
                       {lang == "en" ? "Remove Bookmark" : "북마크 제거"}

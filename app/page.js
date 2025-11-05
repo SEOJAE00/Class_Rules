@@ -194,7 +194,7 @@ export default function Home() {
         </div>
         :
         <div className={styles.loginPage}>
-          <div className={`${styles.wrongPassword} ${wrongPasswordPop ? styles.wrongPasswordOn : styles.wrongPasswordOff}`} onClick={()=>setWrongPasswordPop(false)} style={lang == "en" ? {right:"0px", bottom:"299px"} : {right:"22px", bottom:"299px"}}>{lang == "en" ? langData.wrongPassword[0] : langData.wrongPassword[1]}</div>
+          <div className={`${styles.wrongPassword} ${wrongPasswordPop ? styles.wrongPasswordOn : styles.wrongPasswordOff}`} onClick={()=>setWrongPasswordPop(false)} style={lang == "en" ? {right:"20px", bottom:"299px"} : {right:"22px", bottom:"299px"}}>{lang == "en" ? langData.wrongPassword[0] : langData.wrongPassword[1]}</div>
           <div>
             <div className={styles.loginWrapper}>
               <div className={styles.loginTo}>{lang == "en" ? langData.signup[0] : langData.signup[1]}</div>

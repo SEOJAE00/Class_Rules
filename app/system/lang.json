@@ -7,7 +7,7 @@
   "email" : ["Email", "이메일"],
   "password" : ["Password", "비밀번호"],
   "confirmPassword" :["Confirm Password", "비밀번호 확인"],
-  "wrongPassword" :["8-16 characters, include\nnumbers & special characters", "8-16자의 영문자, 숫자, 특수문자"],
+  "wrongPassword" :["8-16 characters, numbers,\nspecial characters", "8-16자의 영문자, 숫자, 특수문자"],
   "forgot" : ["forgot your password?", "비밀번호를 잊어버리셨나요?"],
   "create" : ["Create Account", "계정 만들기"],
   "loginBtn" : ["Log In", "로그인"],

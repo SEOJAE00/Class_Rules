@@ -3,18 +3,26 @@
 import { useLang } from "../context/LangContext";
 import langData from "../system/lang.json"
 import styles from "../css/header.module.css"
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData, advancedPop, setAdvancedPop, shipNumPop, setShipNumPop, setHtmlContent, setSelectedFile} ) {
+export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData, advancedPop, setAdvancedPop, shipNumPop, setShipNumPop, setHtmlContent, setSelectedFile, goSociNum} ) {
 
   let router = useRouter();
 
   const { lang, toggleLang } = useLang();
 
   let [shipInfoDropdown, setShipInfoDropdown] = useState(false);
+  let [filteredShips, setFilteredShips] = useState([]);
 
   let testarr = ["12312314", "4522", "76867876", "aegkhjas", "dagfhis", "safasd"];
+
+  useEffect(() => {
+    const filtered = shipInfoData.filter(
+      (ship) => String(ship.shipClass) === String(goSociNum)
+    );
+    setFilteredShips(filtered);
+  }, [shipInfoData, goSociNum]);
 
   // 로그아웃 함수
   let handleLogout = () => {
@@ -59,10 +67,10 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
             <div className={`${styles.dropdownForm} ${shipInfoDropdown ? styles.dropdownShow : styles.dropdownHidden}`}>
               
               {
-                testarr?.map((a, i)=>{
+                filteredShips?.map((a, i)=>{
                   return (
-                    <div key={i} className={styles.dropdownContents} onClick={()=>{setShipInfo(a); setShipInfoDropdown(!shipInfoDropdown); setHtmlContent(''); setSelectedFile("")}}>
-                      {a}
+                    <div key={i} className={styles.dropdownContents} onClick={()=>{setShipInfo(a.hullName); setShipInfoDropdown(!shipInfoDropdown); setHtmlContent(''); setSelectedFile("")}}>
+                      {a.hullName}
                     </div>
                   )
                 })
