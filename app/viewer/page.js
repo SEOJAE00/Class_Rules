@@ -44,7 +44,8 @@ export default function Viewer() {
   let soci = ["KOREAN REGISTER(en)", "KOREAN REGISTER(kr)", "American Bureau of Shipping", "BUREAU VERITAS", "Det Norske Veritas", "Lloyd's Register", "Nippon Kaiji Kyokai"];
   let sociColor = ["#0085ca", "#0085ca", "#0e294c", "#7e190c", "#0f214a", "#00a99d", "#2d5ea3"];
   let sociAPI = ["KR", "KRko", "ABS", "BV", "DNV", "LR", "NK"];
-  let sociNum = [1, 3, 4, 6, 2, 5, 7];
+  //let sociNum = [1, 3, 4, 6, 2, 5, 7];
+  let sociNum = [4, 5, 1, 2, 6, 3, 7];
   let [goSociAPI, setGoSociAPI] = useState(sociAPI[0]);
   let [classSoci, setClassSoci] = useState(soci[0]);
   let [goSociNum, setGoSociNum] = useState(sociNum[0]);
@@ -185,6 +186,7 @@ export default function Viewer() {
   let [navigateHtml, setNavigateHtml] = useState('');
   let [isNavigateOpen, setNavigateOpen] = useState(false);
   let [memo, setMemo] = useState('');
+  let [calcLog, setCalcLog] = useState(null); // ✅ 이 줄을 추가하세요
 
   useEffect(() => {
     window.setNavigateHtml = (value) => {
@@ -357,10 +359,47 @@ export default function Viewer() {
 
   // MathJax 수식 렌더링
   useEffect(() => {
+    // 1. MathJax 렌더링
     if (window.MathJax) {
-      window.MathJax.typesetPromise();
+      window.MathJax.typesetPromise()
+        .then(() => {
+          console.log("MathJax typesetting complete.");
+        })
+        .catch((err) => console.error("MathJax error:", err));
     }
-  }, [htmlContent, isNavigateOpen]);
+
+    // 2. 계산 기록 주입 (calcLog 데이터가 있을 때만 실행)
+    if (calcLog) {
+      console.log("Injecting calculation log:", calcLog);
+      const data = calcLog; // state에서 데이터 가져오기
+
+      data.forEach(item => {
+        const inputPairs = item.input ? item.input.replace(/[{}]/g, '').split(', ') : [];
+        const resultPairs = item.result ? item.result.replace(/[{}]/g, '').split(', ') : [];
+        const pairs = [...inputPairs, ...resultPairs];
+
+        pairs.forEach(pair => {
+          const [key, value] = pair.split('=');
+          if (key && value) {
+            try {
+              // 중괄호와 같은 특수 문자를 CSS 선택자에 맞게 이스케이프
+              const escapedKey = key.trim().replace(/\{/g, '\\\\7B').replace(/\}/g, '\\\\7D');
+              const inputElements = document.querySelectorAll(`#${escapedKey}`);
+              
+              inputElements.forEach(el => {
+                if (el.tagName === 'INPUT') el.value = value.trim();
+              });
+
+            } catch (e) {
+              console.error(`Error processing calculation log key: ${key}`, e);
+            }
+          }
+        });
+      });
+      // DOM 주입이 완료된 후 calcLog를 null로 비우지 않습니다.
+      // (팝업 등으로 인한 재렌더링 시 값이 유지되어야 함)
+    }
+  }, [htmlContent, isNavigateOpen, calcLog]); // ✅ 의존성 배열에 'calcLog' 추가
 
   let handleFilePath = (filePath) => {
     let trimmed = filePath.replace(/^\/data\//, "");
@@ -381,63 +420,69 @@ export default function Viewer() {
     }
   };
 
-  // 파일 불러오기
+  // 문서 변경 함수
   let handleFileClick = async (filePath) => {
     setLoading(true);
+    setCalcLog(null); // ✅ 중요: 이전 계산 기록을 즉시 제거
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found in localStorage.");
+      setLoading(false);
       return;
     }
 
+    let html = '';
     try {
-      // HTML 파일 내용 요청
+      // --- 1. HTML 파일 내용 요청 (필수) ---
       const response = await axios.get("/api/proxy/api/html", {
         params: { path: filePath },
         headers: {
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        responseType: "text", // HTML 문자열로 받기
+        responseType: "text",
       });
 
-      const html = response.data;
+      html = response.data;
 
-      // 상태 초기화
-      resetState();
-
-      // 파일 경로에서 파트/챕터/섹션 추출
-      const match = filePath.match(/Part (\d+).*?Chapter (\d+).*?(SECTION|Section) (\d+)/);
-      let formattedResult = null;
-
-      if (match) {
-        const partNumber = match[1];
-        const chapterNumber = match[2];
-        const sectionNumber = match[4];
-        console.log(partNumber, " | ", chapterNumber, " | ", sectionNumber);
-
-        formattedResult = `${partNumber}_${chapterNumber}_${sectionNumber}`;
-        window.partNumber = partNumber;
-        window.chapterNumber = chapterNumber;
-        window.sectionNumber = sectionNumber;
-      }
-      console.log(formattedResult);
-      console.log(filePath);
-      handleFilePath(filePath);
-      setSelectedFile(filePath);
-      setMemo('');
-      setShowSearch(false);
-
-      // HTML 내용 저장
-      setHtmlContent(html);
     } catch (error) {
       console.error("Error fetching HTML content:", error);
-    } finally {
       setLoading(false);
+      return;
     }
 
+    // --- 2. 상태 초기화 (HTML 로드 성공 후) ---
+    resetState();
+    const match = filePath.match(/Part (\d+).*?Chapter (\d+).*?(SECTION|Section) (\d+)/);
+    if (match) {
+      const partNumber = match[1];
+      const chapterNumber = match[2];
+      const sectionNumber = match[4];
+      console.log(partNumber, " | ", chapterNumber, " | ", sectionNumber);
+      window.partNumber = partNumber;
+      window.chapterNumber = chapterNumber;
+      window.sectionNumber = sectionNumber;
+    }
+    handleFilePath(filePath);
+    setSelectedFile(filePath);
+    setMemo(''); // 메모 상태 초기화
+    setShowSearch(false);
+    setHtmlContent(html); // HTML 콘텐츠 설정 (1차 렌더링 유발)
+
+    // --- 3. 메모 및 계산 기록 병렬 요청 ---
     try {
-      const logResponse = await axios.get("/api/proxy/api/calculation-log", {
+      // 메모 요청 프로미스
+      const memoPromise = axios.get("/api/proxy/api/memo", {
+        params: { filePath: filePath },
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        validateStatus: (status) => status >= 200 && status < 300 || status === 404,
+      });
+
+      // 계산 기록 요청 프로미스
+      const logPromise = axios.get("/api/proxy/api/calculation-log", {
         params: { shipInfo, info: goSociNum },
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -445,53 +490,52 @@ export default function Viewer() {
         },
       });
 
-      const data = logResponse.data;
-      console.log("Response Data:", data);
+      // 두 요청이 모두 완료될 때까지 대기
+      const [memoResponse, logResponse] = await Promise.all([memoPromise, logPromise]);
 
-      data.forEach(item => {
-        const inputPairs = item.input ? item.input.replace(/[{}]/g, '').split(', ') : [];
-        const resultPairs = item.result ? item.result.replace(/[{}]/g, '').split(', ') : [];
-        const pairs = [...inputPairs, ...resultPairs];
+      // --- 4. 메모 결과 처리 ---
+      if (memoResponse.status === 404 || !memoResponse.data) {
+        setMemo("");
+      } else {
+        setMemo(memoResponse.data); // 'setMemo'가 2차 렌더링 유발
+      }
+      console.log("Memo loaded.");
 
-        pairs.forEach(pair => {
-          const [key, value] = pair.split('=');
-          if (key && value) {
-            const escapedKey = key.trim().replace(/\{/g, '\\\\7B').replace(/\}/g, '\\\\7D');
-            const inputElements = document.querySelectorAll(`#${escapedKey}`);
-            inputElements.forEach(el => {
-              if (el.tagName === 'INPUT') el.value = value.trim();
-            });
-          }
-        });
-      });
+      // --- 5. 계산 기록 결과 처리 ---
+      setCalcLog(logResponse.data); // ✅ DOM 주입 대신 State에 저장 (2차 렌더링 유발)
+      console.log("Calculation log fetched and stored in state.");
+
     } catch (error) {
-      console.error("Error fetching calculation log:", error);
-    };
+      console.error("Error fetching memo or calculation log:", error);
+      // setCalcLog(null); // 이미 위에서 null로 설정됨
+    } finally {
+      setLoading(false); // 'setLoading'이 2차 렌더링 유발
+    }
   };
 
-    const handleDownload = () => {
-    // 로컬 스토리지에서 토큰 가져오기
-      const token = localStorage.getItem("token");
+  const handleDownload = () => {
+  // 로컬 스토리지에서 토큰 가져오기
+    const token = localStorage.getItem("token");
 
-      // 이전의 계산 기록 요청
-      fetch(`/api/proxy/api/download-log?shipInfo=${shipInfo}&info=${goSociNum}`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`, // 토큰을 Authorization 헤더에 추가
-        },
-      })
-        .then(response => response.blob())
-        .then(blob => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = url;
-          a.download = 'data.xlsx';
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-        });
-    }
+    // 이전의 계산 기록 요청
+    fetch(`/api/proxy/api/download-log?shipInfo=${shipInfo}&info=${goSociNum}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`, // 토큰을 Authorization 헤더에 추가
+      },
+    })
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'data.xlsx';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
+  }
 
   // html 내 계산 함수
   const handleSubmit = (index) => {
@@ -551,11 +595,6 @@ export default function Viewer() {
   };
 
   const handleOnesearch = async (keywords) => {
-
-    let dhang
-    if(sociNum < 4) {
-
-    }
 
     try {
       const token = localStorage.getItem("token");
@@ -647,37 +686,6 @@ export default function Viewer() {
         alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
       }
   };
-
-  useEffect(() => {
-    if (!selectedFile) return;
-
-    setMemo("");
-    const fetchMemo = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const response = await axios.get("/api/proxy/api/memo", {
-          params: { filePath: selectedFile },
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          validateStatus: (status) => status >= 200 && status < 300 || status === 404,
-        });
-
-        if (response.status === 404 || !response.data) {
-          setMemo("");
-        } else {
-          setMemo(response.data);
-        }
-      } catch (error) {
-        console.error("메모 조회 오류:", error);
-      }
-    };
-
-    fetchMemo();
-  }, [selectedFile]); // ✅ selectedFile이 바뀔 때마다 실행
 
   // 상세검색 팝업
   let [advancedPop, setAdvancedPop] = useState(false);
@@ -777,14 +785,17 @@ export default function Viewer() {
                           a.fileDetails.map((a, i)=>{
                             return (
                               <div className={styles.bookWrapper} key={i}>
-                                <div className={styles.bookmarkContentWrapper} onClick={()=>{                                
-                                  setClassSoci(soci[sociIndex]);
-                                  setClassSociColor(sociColor[sociIndex]);
-                                  setGoSociAPI(sociAPI[sociIndex]);
-                                  setGoSociNum(sociNum[sociIndex]);
-                                  handleSoci(sociAPI[sociIndex], sociNum[sociIndex]);
-                                  handleFileClick(a.filePath);
-                                  }}>
+                                <div className={styles.bookmarkContentWrapper} onClick={async ()=>{  // ✅ async 추가
+                                  try {
+                                    setClassSoci(soci[sociIndex]);
+                                    setClassSociColor(sociColor[sociIndex]);
+                                    setGoSociAPI(sociAPI[sociIndex]);
+                                    setGoSociNum(sociNum[sociIndex]);
+                                    await handleSoci(sociAPI[sociIndex], sociNum[sociIndex]);
+                                    handleFileClick(a.filePath);
+                                  } catch (error) {
+                                    console.error("Error handling bookmark click:", error);
+                                  }}}>
                                   <div>-</div>
                                   <div>{a.title}</div>
                                 </div>
@@ -1008,12 +1019,8 @@ export default function Viewer() {
           <div className={styles.feedback} onClick={()=>{setFeedback(!feedback)}}>
             {lang == "en" ? langData.feedback[0] : langData.feedback[1]}
           </div>
-
         </div>
-
       </div>
-
-      
     </div>
   )
 }
