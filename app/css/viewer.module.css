@@ -141,6 +141,24 @@
 .bookmarkDisable {
   display: none;
 }
+.bookWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 346px;
+  margin-top: 10px;
+}
+.bookmarkContentWrapper {
+  display: flex;
+  gap: 4px;
+  color: #555;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 20px;
+  margin-left: 20px;
+  width: 286px;
+  cursor: pointer;
+}
 .searchWrapper {
   position: relative;
   margin: 14px 0 20px 0;
@@ -396,4 +414,28 @@
   text-align: center;
   border-top: 1px solid #ccc;
   cursor: pointer;
+}
+.searchResultWrapper {
+  padding: 20px;
+  width: 370px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.searchResultPath {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 0px;
+}
+.filePathText2 {
+  font-weight: 400;
+  color: #888;
+  display: inline;
+}
+.titleText {
+  font-weight: 500;
+  line-height: 20px;
+  margin-bottom: 14px;
 }

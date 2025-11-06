@@ -108,12 +108,15 @@ export default function Viewer() {
           "Content-Type": "application/json",
         },
       });
+      if(goSociNum != num) {
+        setShipInfo("--------");
+      }
       setFolderStructure(response.data);
       setGoSociNum(num); // 마지막으로 누른 버튼 값 설정
-      setShipInfo("--------");
       setInputValue("");
       setHtmlContent('');
       setFilePath('');
+      setShowSearch(false);
       console.log(folderStructure);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -222,21 +225,16 @@ export default function Viewer() {
       alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
     }
   };
-  let handleBookmarkRemove = async () => {
+  let handleBookmarkRemove = async (filePath) => {
     try {
       const token = localStorage.getItem("token"); // 토큰 가져오기
-      const response = await axios.delete(
-        "/api/proxy/api/bookmark",
-        {
-          filePath: selectedFile
+      const response = await axios.delete("/api/proxy/api/bookmark", {
+        data: { filePath: filePath }, // ✅ JSON body로 전달
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
-        {
-          headers: { 
-            "Authorization": `Bearer ${token}`, 
-            "Content-Type": "application/json"
-          }
-        }
-      );
+      });
       fetchBookmark();
     } catch (error) {
       console.error("북마크 등록 오류:", error);
@@ -427,6 +425,8 @@ export default function Viewer() {
       console.log(filePath);
       handleFilePath(filePath);
       setSelectedFile(filePath);
+      setMemo('');
+      setShowSearch(false);
 
       // HTML 내용 저장
       setHtmlContent(html);
@@ -436,49 +436,37 @@ export default function Viewer() {
       setLoading(false);
     }
 
-    // 이전의 계산 기록 요청
-    fetch(`/api/proxy/api/calculation-log?shipInfo=${shipInfo}&info=${goSociNum}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`, // 토큰을 Authorization 헤더에 추가
-      },
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json(); // JSON 응답으로 변환
-      })
-      .then(data => {
-        console.log("Response Data:", data); // 응답 데이터 처리
-        data.forEach(item => {
-          // `input`과 `result`를 `{key=value}` 형식으로 파싱
-          const inputPairs = item.input ? item.input.replace(/[{}]/g, '').split(', ') : [];
-          const resultPairs = item.result ? item.result.replace(/[{}]/g, '').split(', ') : [];
-
-          // input과 result의 key-value 쌍을 하나의 배열로 병합
-          const pairs = [...inputPairs, ...resultPairs];
-
-          pairs.forEach(pair => {
-            const [key, value] = pair.split('=');
-
-            if (key && value) {
-              const escapedKey = key.trim().replace(/\{/g, '\\\\7B').replace(/\}/g, '\\\\7D');
-              const inputElements = document.querySelectorAll(`#${escapedKey}`);
-
-              inputElements.forEach(inputElement => {
-                if (inputElement.tagName === 'INPUT') {
-                  inputElement.value = value.trim();
-                }
-              });
-            }
-          });
-        });
-        //alert(`${shipInfo}의 계산 기록 ${data.length}건을 불러왔습니다.`)
-      })
-      .catch(error => {
-        console.error("There was a problem with the fetch operation:", error);
+    try {
+      const logResponse = await axios.get("/api/proxy/api/calculation-log", {
+        params: { shipInfo, info: goSociNum },
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
+
+      const data = logResponse.data;
+      console.log("Response Data:", data);
+
+      data.forEach(item => {
+        const inputPairs = item.input ? item.input.replace(/[{}]/g, '').split(', ') : [];
+        const resultPairs = item.result ? item.result.replace(/[{}]/g, '').split(', ') : [];
+        const pairs = [...inputPairs, ...resultPairs];
+
+        pairs.forEach(pair => {
+          const [key, value] = pair.split('=');
+          if (key && value) {
+            const escapedKey = key.trim().replace(/\{/g, '\\\\7B').replace(/\}/g, '\\\\7D');
+            const inputElements = document.querySelectorAll(`#${escapedKey}`);
+            inputElements.forEach(el => {
+              if (el.tagName === 'INPUT') el.value = value.trim();
+            });
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Error fetching calculation log:", error);
+    };
   };
 
     const handleDownload = () => {
@@ -550,27 +538,146 @@ export default function Viewer() {
   // 현재 기관 검색 관련
   let [inputValue, setInputValue] = useState(""); // 인풋값
   let [searchKeyword, setSearchKeyword] = useState([]); // 분리된 키워드 배열
+  let [searchKeywordResult, setSearchKeywordResult] = useState([]);
+
   let separateKeyword = () => {
-    if (!inputValue) return;
-    const result = inputValue.split(",").map((item) => item.trim()).filter((item) => item !== "");
+    if (!inputValue) return [];
+    const result = inputValue
+      .split(",")
+      .map((item) => item.trim())
+      .filter((item) => item !== "");
     setSearchKeyword(result);
-    console.log(result);
-    setShowSearch(true)
+    return result; // ✅ 분리된 키워드를 반환
+  };
+
+  const handleOnesearch = async (keywords) => {
+
+    let dhang
+    if(sociNum < 4) {
+
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+
+      const response = await axios.post(
+        "/api/proxy/api/onesearch",
+        {
+          shipClass: goSociNum,
+          words: keywords, // ✅ 전달받은 키워드 사용
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setSearchKeywordResult(response.data);
+      setShowSearch(true);
+      console.log(response.data);
+    } catch (error) {
+      console.error("요청 오류:", error);
+      if (error.response) {
+        console.error("서버 응답:", error.response.data);
+      }
+      alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
+    }
   };
   let handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      separateKeyword();
+      const keywords = separateKeyword();
+      handleOnesearch(keywords);
     }
   };
 
   let handleDeleteMemo =  async () => {
-
+    try {
+      const token = localStorage.getItem("token"); // 토큰 가져오기
+      if (!token) {
+        alert(lang == "en" ? "Login required" : "로그인이 필요합니다.");
+        return;
+      }
+      const response = await axios.delete("/api/proxy/api/memo", {
+        data: { filePath: selectedFile }, // ✅ JSON body로 전달
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setMemo('');
+      alert(lang == "en" ? "Memo successfully deleted" : "메모가 삭제되었습니다.");
+    } catch (error) {
+      console.error("메모 삭제 오류:", error);
+      if (error.response) {
+        console.error("서버 응답:", error.response.data);
+      }
+      alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
+    }
   };
 
-  let handleSubmitMemo = () => {
-
+  let handleSubmitMemo = async () => {
+    try {
+        const token = localStorage.getItem("token"); // 토큰 가져오기
+        const response = await axios.post(
+          "/api/proxy/api/memo",
+          {
+            filePath: selectedFile,
+            text: memo,
+          },
+          {
+            headers: { 
+              "Authorization": `Bearer ${token}`, 
+              "Content-Type": "application/json"
+            }
+          }
+        );
+        setMemo(memo);
+        alert(lang == "en" ? "Memo successfully created" : "메모가 작성되었습니다.");
+      } catch (error) {
+        console.error("메모 등록 오류:", error);
+        if (error.response) {
+          console.error("서버 응답:", error.response.data);
+        }
+        alert(lang == "en" ? "Please refresh the page" : "페이지를 새로고침 해주세요.");
+      }
   };
+
+  useEffect(() => {
+    if (!selectedFile) return;
+
+    setMemo("");
+    const fetchMemo = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const response = await axios.get("/api/proxy/api/memo", {
+          params: { filePath: selectedFile },
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          validateStatus: (status) => status >= 200 && status < 300 || status === 404,
+        });
+
+        if (response.status === 404 || !response.data) {
+          setMemo("");
+        } else {
+          setMemo(response.data);
+        }
+      } catch (error) {
+        console.error("메모 조회 오류:", error);
+      }
+    };
+
+    fetchMemo();
+  }, [selectedFile]); // ✅ selectedFile이 바뀔 때마다 실행
 
   // 상세검색 팝업
   let [advancedPop, setAdvancedPop] = useState(false);
@@ -658,8 +765,7 @@ export default function Viewer() {
                       key={i}
                       style={{
                         marginBottom: isLast ? '0px' : '20px', // 마지막만 0px
-                      }}
-                    >
+                      }}>
                       <div className={styles.sociTextWrapper2}>
                         <img src={`/sociCover/${sociName}.png`} height={17}/>
                         <div className={styles.sociText2} style={{ color: sociColorValue }}>
@@ -670,8 +776,19 @@ export default function Viewer() {
                         {
                           a.fileDetails.map((a, i)=>{
                             return (
-                              <div key={i}>
-                                {a.title}
+                              <div className={styles.bookWrapper} key={i}>
+                                <div className={styles.bookmarkContentWrapper} onClick={()=>{                                
+                                  setClassSoci(soci[sociIndex]);
+                                  setClassSociColor(sociColor[sociIndex]);
+                                  setGoSociAPI(sociAPI[sociIndex]);
+                                  setGoSociNum(sociNum[sociIndex]);
+                                  handleSoci(sociAPI[sociIndex], sociNum[sociIndex]);
+                                  handleFileClick(a.filePath);
+                                  }}>
+                                  <div>-</div>
+                                  <div>{a.title}</div>
+                                </div>
+                                <img src='/delete.png' height={20} style={{cursor:"pointer"}} onClick={()=>handleBookmarkRemove(a.filePath)}/>
                               </div>
                             )
                           })
@@ -688,7 +805,10 @@ export default function Viewer() {
             <div className={styles.bookText}>{lang == "en" ? langData.outline[0] : langData.outline[1]}</div>
             <div className={styles.searchWrapper}>
               <input className={styles.searchInput} type='text' value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={handleKeyDown} placeholder={lang == "en" ? langData.nowSearch[0] : langData.nowSearch[1]}/>
-              <div onClick={separateKeyword}><img src='/search.png' className={styles.searchIcon}/></div>
+              <div onClick={()=>{
+                const keywords = separateKeyword(); // 분리된 키워드 받기
+                handleOnesearch(keywords); // 바로 전달
+              }}><img src='/search.png' className={styles.searchIcon}/></div>
             </div>
 
             <div className={styles.outlineWrapper}>
@@ -709,7 +829,41 @@ export default function Viewer() {
                     {lang == "en" ? langData.returnOutline[0] : langData.returnOutline[1]}
                   </div>
                   <div>
-                    여기에 {searchKeyword}의 검색 결과 박스
+                    {!searchKeywordResult?.[0]?.fileDetails?.length ?
+                      <div>
+                        {lang == "en" ? langData.noSearchList[0] : langData.noSearchList[1]}
+                      </div> :
+                      <div style={{marginBottom:"20px"}}>
+                        {searchKeywordResult?.[0]?.fileDetails?.map((a, i) => {
+                          // ✅ 경로 가공 로직
+                          const filePathArray = a.filePath
+                            ?.replace(/^\/?data\//, '') // 맨 앞의 /data/ 제거
+                            ?.replace(/\.html$/, '') // .html 제거
+                            ?.split('/') // / 기준으로 분리
+                            ?.filter(Boolean); // 빈 문자열 제거
+                            
+                          return (
+                            <div key={i} className={styles.searchResultWrapper} onClick={()=>{
+                              handleFileClick(a.filePath);
+                            }}>
+                              <div className={styles.titleText}>
+                                {a.title}
+                              </div>
+                              <div className={styles.searchResultPath}>
+                              {filePathArray.map((part, index) => (
+                                <div key={index} className={styles.filePathText2}>
+                                  {part}
+                                  {index < filePathArray.length - 1 && (
+                                    <span style={{ margin: "0 4px" }}>{">"}</span>
+                                  )}
+                                </div>
+                              ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    }
                   </div>
                 </div>
 
@@ -802,7 +956,7 @@ export default function Viewer() {
                       {lang == "en" ? "Add Bookmark" : "북마크 추가"}
                     </div>
                   </div> :
-                  <div className={styles.bookmarkWrapper2} onClick={handleBookmarkRemove}>
+                  <div className={styles.bookmarkWrapper2} onClick={()=>handleBookmarkRemove(selectedFile)}>
                     <img src='/bookmark2.png' height="18px"/>
                     <div className={styles.removeBookmark}>
                       {lang == "en" ? "Remove Bookmark" : "북마크 제거"}

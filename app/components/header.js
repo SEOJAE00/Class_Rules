@@ -55,7 +55,7 @@ export default function Header( {shipInfo, setShipInfo, classSoci, shipInfoData,
       <div className={styles.headerLeftWrapper}>
 
         <div className='flex flexAlignCenter' style={{marginRight:"20px"}}>
-          <img src='/logo.png' width={142}></img>
+          <img src='/logo.png' style={{cursor:"pointer"}} width={142} onClick={()=>{window.location.reload();}}></img>
           <div className='flex flexAlignCenter posiRela' style={{marginLeft:'40px'}}>
             <div className={styles.shipInfo}>{lang == "en" ? langData.shipNum[0] : langData.shipNum[1]}</div>
             <div className={styles.shipInfoBox} onClick={()=>{setShipInfoDropdown(!shipInfoDropdown)}}>
