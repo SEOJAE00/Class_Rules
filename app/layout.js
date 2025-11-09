@@ -1,5 +1,7 @@
 import "./globals.css";
 import { LangProvider } from "./context/LangContext";
+import { AdvancedSearchProvider } from './context/AdvancedSearch';
+import { SelectedFileProvider } from './context/SelectedFileContext';
 
 export const metadata = {
   title: "Class Rules",
@@ -16,7 +18,13 @@ export default function RootLayout({ children }) {
           src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
       ></script>
       <body id="__next">
-        <LangProvider>{children}</LangProvider>
+        <LangProvider>
+          <AdvancedSearchProvider>
+            <SelectedFileProvider>
+              {children}
+            </SelectedFileProvider>
+          </AdvancedSearchProvider>
+        </LangProvider>
       </body>
     </html>
   );

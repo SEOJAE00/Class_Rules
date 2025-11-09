@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react'
 import langData from "../system/lang.json"
 import { useLang } from "../context/LangContext";
+import { useAdvancedSearch } from '../context/AdvancedSearch';
+import { useSelectedFile } from '../context/SelectedFileContext';
 import styles from "../css/viewer.module.css"
 import Header from '../components/header';
 import AdvancedSearch from '../components/advancedSearch';
@@ -20,22 +22,15 @@ export default function Viewer() {
   let router = useRouter();
 
   const { lang, toggleLang } = useLang();
+  const { advSearchResults, advSearchKeyword, setAdvSearchResults, setAdvSearchKeyword } = useAdvancedSearch();
+  // 클릭한 파일 저장할 전역 스테이트
+  const { setSelectedFilePath, setSociNumber, selectedFilePath, sociNumber } = useSelectedFile();
 
   // 로딩
   let [loading, setLoading] = useState(false);
-
+  
   let [terms, setTerms] = useState(false);
   let [feedback, setFeedback] = useState(false);
-
-  // 토큰이 없으면 바로 /로 이동
-  useEffect(() => {
-    if (lang === null) return;
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert(lang == "en" ? "Login is required" : "로그인이 필요합니다");
-      router.replace("/");
-    }
-  }, [lang]);
 
   // 호선 관련
   let [shipInfo, setShipInfo] = useState("--------");
@@ -50,6 +45,116 @@ export default function Viewer() {
   let [classSoci, setClassSoci] = useState(soci[0]);
   let [goSociNum, setGoSociNum] = useState(sociNum[0]);
   let [classSociColor, setClassSociColor] = useState(sociColor[0]);
+
+  // 토큰이 없으면 바로 /로 이동
+  useEffect(() => {
+    if (lang === null) return;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert(lang == "en" ? "Login is required" : "로그인이 필요합니다");
+      router.replace("/");
+    }
+  }, [lang]);
+
+  // 상세검색 결과 리턴
+  useEffect(() => {
+    if (advSearchResults && Object.keys(advSearchResults).length > 0) {
+      console.log(advSearchResults);
+      setHtmlContents(advSearchResults);
+      setHtmlContent(''); 
+      setAdvSearchResults(null);
+      setSelectedFile('');
+    }
+  }, [advSearchResults]);
+
+  // useEffect(() => {
+  //   const index = sociNum.indexOf(Number(sociNumber));
+  //   if (sociNumber || selectedFilePath != '') {
+  //     console.log(sociNumber, selectedFilePath, sociAPI[index]);
+  //     setClassSoci(soci[index]);
+  //     setClassSociColor(sociColor[index]);
+  //     setGoSociAPI(sociAPI[index]);
+  //     setGoSociNum(sociNum[index]);
+  //     handleSoci(sociAPI[index], sociNumber);
+  //     handleFileClick(selectedFilePath);
+  //   }
+  // }, []);
+
+  // Hook 1: (Ships, Bookmark) 마운트 시 1회만 실행
+  useEffect(() => {
+    fetchShips();
+    fetchBookmark();
+  }, []); // 👈 의존성 배열: [] (비어있음)
+
+  // Hook 2: (State 설정) 마운트 시 1회만 실행, URL 파라미터로 state 세팅
+  useEffect(() => {
+    // sociNumber가 URL 등에서 넘어왔는지 확인
+    if (sociNumber) {
+      const index = sociNum.indexOf(Number(sociNumber));
+
+      if (index !== -1) {
+        // 1. goSociAPI state를 먼저 세팅합니다.
+        //    (이 state 변경이 Hook 3을 트리거합니다)
+        setGoSociAPI(sociAPI[index]); 
+        
+        // 2. 나머지 UI state 및 핸들러 호출
+        setClassSoci(soci[index]);
+        setClassSociColor(sociColor[index]);
+        setGoSociNum(sociNum[index]);
+
+        // 3. 파일 경로가 있을 때만 파일 관련 핸들러 호출
+        if (selectedFilePath) { 
+          handleSoci(sociAPI[index], sociNumber);
+          handleFileClick(selectedFilePath);
+        }
+      } else {
+         console.error("URL의 sociNumber가 유효하지 않습니다.");
+         // 유효하지 않을 경우 기본값으로 세팅
+         setGoSociAPI(sociAPI[0]); 
+      }
+    } else {
+      // URL에 sociNumber가 없을 경우, 기본값(KR)으로 세팅
+      setGoSociAPI(sociAPI[0]);
+    }
+  }, []); // 👈 의존성 배열: [] (비어있음 - 마운트 시 1회만 실행)
+
+
+  // Hook 3: (데이터 페칭) goSociAPI state가 '변경될 때마다' 실행
+  useEffect(() => {
+    
+    // 1. goSociAPI가 아직 설정되지 않았으면(초기값 null 등) 실행 방지
+    if (!goSociAPI) return; 
+
+    setLoading(true);
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found in localStorage.");
+        return;
+      }
+
+      try {
+        console.log(`Fetching outlines for: ${goSociAPI}`); // 👈 디버깅 로그
+        const response = await axios.get("/api/proxy/api/outlines", {
+          // 2. 확정된 goSociAPI 값을 사용
+          params: { path: goSociAPI }, 
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        });
+        setFolderStructure(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+
+  }, [goSociAPI]); // 👈 ***의존성 배열: [goSociAPI]***
+
   let [sociDropdownCK, setSociDropdownCK] = useState(false);
   let [bookmark, setBookmark] = useState([]);
   let [updateDate, setUpdateDate] = useState('2025.05.15');
@@ -61,41 +166,43 @@ export default function Viewer() {
 
   let [folderStructure, setFolderStructure] = useState([]);
   // 처음 랜딩 때 보여지는 선급
-  useEffect(() => {
-    setLoading(true);
-    const fetchData = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        console.error("No token found in localStorage.");
-        return;
-      }
+  // useEffect(() => {
+  //   setLoading(true);
+  //   const fetchData = async () => {
+  //     const token = localStorage.getItem("token");
+  //     if (!token) {
+  //       console.error("No token found in localStorage.");
+  //       return;
+  //     }
 
-      try {
-        const response = await axios.get("/api/proxy/api/outlines", {
-          params: { path: goSociAPI },
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        });
-        setFolderStructure(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-      setLoading(false);
-    }
-    };
-    fetchData();
+  //     try {
+  //       const response = await axios.get("/api/proxy/api/outlines", {
+  //         params: { path: goSociAPI },
+  //         headers: {
+  //           "Authorization": `Bearer ${token}`,
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+  //       setFolderStructure(response.data);
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     } finally {
+  //     setLoading(false);
+  //   }
+  //   };
+  //   fetchData();
 
-    fetchShips();
-    fetchBookmark();
-    // + 북마크 가져오는 거 추가, + 호선 가져오는 거 추가
-  }, []);
+  //   fetchShips();
+  //   fetchBookmark();
+  //   // + 북마크 가져오는 거 추가, + 호선 가져오는 거 추가
+  // }, []);
 
   // 목차 불러오는 함수
   let handleSoci = async (apiPath, num) => {
     setLoading(true);
+    setSociNumber('');
+    setSelectedFilePath('');
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found in localStorage.");
@@ -124,8 +231,6 @@ export default function Viewer() {
     } finally {
       setLoading(false);
     }
-
-    // + 호선 가져오는 기능 추가
   };
 
   const fetchShips = async () => {
@@ -424,6 +529,8 @@ export default function Viewer() {
   let handleFileClick = async (filePath) => {
     setLoading(true);
     setCalcLog(null); // ✅ 중요: 이전 계산 기록을 즉시 제거
+    setSociNumber('');
+    setSelectedFilePath('');
     const token = localStorage.getItem("token");
     if (!token) {
       console.error("No token found in localStorage.");
@@ -880,54 +987,70 @@ export default function Viewer() {
 
               </div>
             </div>
-
           </div>
-          
         </div>
 
         <div className={styles.centerBarWrapper}>
-          <div>
-            {isNavigateOpen && (
-              <HtmlPopup html={navigateHtml} isNavigateOpen={isNavigateOpen} setNavigateOpen={setNavigateOpen}></HtmlPopup>
-            )}
-          </div>
-          {
-            htmlContent == '' ? 
+          {            
+            // 1. htmlContent와 htmlContents가 모두 비어있으면
+            htmlContent == '' && Object.keys(htmlContents).length === 0 ? 
             <div className={styles.notHtmlYet} style={{paddingTop:"30px"}}>
               {lang == "en" ? langData.notHtml[0] : langData.notHtml[1]}
             </div> : 
+            
+            // 2. 그 외의 경우 (뭐라도 렌더링할 게 있으면)
             <div className='flex' style={{flexDirection:"column"}}>
-              <div className={styles.filePathWrapper}>
-                <div>
-                  {filePath.map((part, index) => (
-                    <div key={index} className={styles.filePathText}>
-                      {part}
-                      {index < filePath.length - 1 && (
-                        <span style={{ margin: "0 4px" }}>{">"}</span>
-                      )}
+              <div className='flex' style={{flexDirection:"column"}}>
+                {Object.keys(htmlContents).length > 0 ?
+                  <div className={styles.filePathWrapper}>
+                    <div>
+                      <div className={styles.adSearchText}>
+                        <div className={styles.adSeReult}>
+                          {lang == "en" ? langData.adSearchResult[0] : langData.adSearchResult[1]}
+                        </div>
+                        <div className={styles.iconWrapper}>
+                          <img src='/download.png' height="22px"/>
+                          <div className={styles.iconText}>PDF</div>
+                        </div>
+                      </div>
+                      <div className={styles.keywordText}>
+                        <div>
+                          {lang == "en" ? "Keyword 1:" : "키워드 1:"} {advSearchKeyword[0]}
+                        </div>
+                        <div>|</div>
+                        <div>
+                          {lang == "en" ? "Keyword 2:" : "키워드 2:"} {advSearchKeyword[1]}
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-                <img src='/copy.png' width="24" className='pointer' onClick={() => {
-                  const textToCopy = filePath.join(" > ");
-                  navigator.clipboard.writeText(textToCopy);
-                  alert(lang == "en" ? langData.copyPath[0] : langData.copyPath[1]);
-                }}/>
+
+                  </div> :
+                  <div className={styles.filePathWrapper}>
+                    <div>
+                      {filePath.map((part, index) => (
+                        <div key={index} className={styles.filePathText}>
+                          {part}
+                          {index < filePath.length - 1 && (
+                            <span style={{ margin: "0 4px" }}>{">"}</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <img src='/copy.png' width="24" className='pointer' onClick={() => {
+                      const textToCopy = filePath.join(" > ");
+                      navigator.clipboard.writeText(textToCopy);
+                      alert(lang == "en" ? langData.copyPath[0] : langData.copyPath[1]);
+                    }}/>
+                  </div>  
+                }
               </div>
               <div className={styles.htmlWrapper} style={{ overflowY: 'scroll' }} id="content">
-                {Object.keys(htmlContents).length > 1 && (
-                  <div className="flex justify-center mt-4">
-                    {Object.keys(htmlContents).map((key, index) => (
-                      <button key={index} className={`mx-2 ${currentIndex === index ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'}`} onClick={() => setCurrentIndex(index)}>
-                        {key}
-                      </button>
-                    ))}
-                  </div>
-                )}
                 <div style={{ padding: 10 }}>
                   {Object.keys(htmlContents).length > 0 ? (
+                    // 1. 상세 검색 뷰 (탭)
                     <div id="html" dangerouslySetInnerHTML={{ __html: htmlContents[Object.keys(htmlContents)[currentIndex]] }} />
                   ) : (
+                    // 2. 기본 문서 뷰 (단일)
                     <div id="html" dangerouslySetInnerHTML={{ __html: htmlContent }} />
                   )}
                 </div>
@@ -935,7 +1058,7 @@ export default function Viewer() {
             </div>
           }
         </div>
-
+        {Object.keys(htmlContents).length > 0 ? null :
         <div className={styles.rightBarWrapper}>
           { htmlContent == '' ?
             <div className={styles.notHtmlYet}>
@@ -1020,7 +1143,9 @@ export default function Viewer() {
             {lang == "en" ? langData.feedback[0] : langData.feedback[1]}
           </div>
         </div>
+        }
       </div>
+      
     </div>
   )
 }

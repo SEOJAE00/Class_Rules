@@ -10,3 +10,268 @@
   align-items: center;
   z-index: 999;
 }
+.adSearchWrapper {
+  padding: 50px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 740;
+  position: relative;
+}
+.closeIcon {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.ShipNumText {
+  font-size: 36px;
+  font-weight: 600;
+  color: #0066ff;
+  margin-bottom: 10px;
+}
+.ShipNumDes {
+  white-space: pre-line;
+  color: #555;
+  font-weight: 400;
+  line-height: 22px;
+}
+.leftBarsoci {
+  margin: 30px 0 0 0px;
+  position: relative;
+}
+.soci {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 102px;
+}
+.classSociWrapper {
+  width: 420px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 20px 20px 0;
+  transition: 0.3s;
+  flex-direction: column;
+  position: absolute;
+  top: 38;
+  left: 0;
+  z-index: 999;
+}
+.sociText {
+  font-weight: 600;
+  margin-left: 10px;
+}
+.sociTextWrapper2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sociText2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.selectSoci {
+  width: 368px;
+  height: 48px;
+  padding-left: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: #ffffff;
+  transition: 0.3s;
+  border-radius: 4px;
+}
+.active {
+  opacity: 1;
+  pointer-events: auto;
+  transition: 0.4s;
+}
+.disable {
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.4s;
+}
+.selectSoci:hover {
+  background: #e5f6ff;
+  transition: 0.3s;
+}
+.selectTextBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.selectText {
+  font-size: 20px;
+  font-weight: 600
+}
+.selectText2 {
+  color: #555;
+  font-weight: 400;
+}
+.partBox {
+  width: 200px;
+  height: 58px;
+  padding-right: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.selectText3 {
+  color: #888;
+  font-weight: 500;
+  margin-left: 20px;
+}
+.dropList {
+  width: 200px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  position: absolute;
+  top: 102px;
+  left: 0px;
+  height: fit-content;
+  max-height: 240px;
+  overflow-y: scroll;
+  z-index: 999;
+}
+.listContent {
+  margin: 2px;
+  width: 194px;
+  color: #555;
+  font-weight: 500;
+  padding: 10px 0 10px 18px;
+  cursor: pointer;
+  background: #fff;
+  transition: 0.3s;
+}
+.listContent:hover {
+  background: #e5f6ff;
+  transition: 0.3s;
+}
+.selectedBox {
+  height: 38px;
+  background: #e5f6ff;
+  padding: 7px 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.selectedText {
+  font-size: 20px;
+  color: #555;
+  font-weight: 500;
+}
+.selectText span {
+  color: #d00000;
+}
+.keywordInput {
+  margin-top: 14px;
+  width: 616.67px;
+  height: 40.67px;
+  padding-left: 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #FFF;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+.keywordInput:focus {
+  outline: none;
+  border: 1px solid #06F;
+  background: #F7FCFF;
+  transition: 0.3s;
+}
+.keywordInput2 {
+  margin-top: 14px;
+  width: 506.67px;
+  height: 40.67px;
+  padding: 0 110px 0 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #FFF;
+  font-size: 16px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+.keywordInput2:focus {
+  outline: none;
+  border: 1px solid #06F;
+  background: #F7FCFF;
+  transition: 0.3s;
+}
+.optionText {
+  color: #555;
+  font-weight: 400;
+}
+.andKeyword {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.switchCondi {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  right: 10px;
+  bottom: 10px;
+  width: 90px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid #CCC;
+  background: #eee;
+  cursor: pointer;
+}
+.selectAnd {
+  font-size: 16px;
+  font-weight: 400;
+  margin-left: 8px;
+  z-index: 99;
+}
+.selectOr {
+  font-size: 16px;
+  font-weight: 400;
+  position: absolute;
+  bottom: 2px;
+  right: 14px;
+  z-index: 99;
+}
+.selectedCondi {
+  width: 45px;
+  height: 23px;
+  background: #0066ff;
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+}
+.submitWrapper {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.closeText {
+  color: #888;
+  font-weight: 400;
+  cursor: pointer;
+}
+.makeBtn {
+  width: 98px;
+  height: 36px;
+  font-size: 16px;
+  border: none;
+  background: #e5f6ff;
+  color: #0066ff;
+  border-radius: 4px;
+  cursor: pointer;
+}

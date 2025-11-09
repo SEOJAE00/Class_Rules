@@ -41,5 +41,7 @@
   "newShipNum" : ["New Ship Number", "새 호선 만들기"],
   "shipNumDes" : ["Calculation records are automatically stored \nand easily viewed by the ship number you create.", "생성한 호선에 따라 계산 기록을 \n자동으로 저장하고 조회할 수 있습니다."],
   "newShipNumText" : ["Ship Number", "호선"],
-  "noSearchList" : ["No results found", "검색 결과가 없습니다."]
+  "noSearchList" : ["No results found", "검색 결과가 없습니다."],
+  "adSearchDes" : ["The system searches the selected document area for the entered keyword,\nextracts related documents and sentences, and generates an integrated document.", "선택한 문서 영역에서 입력한 키워드를 검색해,\n 관련 문서와 문장을 추출하고 하나의 통합 문서를 생성합니다."],
+  "adSearchResult" : ["Advanced Search Result", "상세검색 결과"]
 }
