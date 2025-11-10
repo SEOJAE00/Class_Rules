@@ -39,8 +39,8 @@ export default function FileTreeView({ data, onFileClick, level = 0, isLastFile 
                         className={styles.fileWrapper}
                         style={{
                             marginBottom: isLastFile ? '20px' : '0',
-                            background: isSelected ? "#BCE9FF" : "",
-                            color: isSelected ? "#0066FF" : "#555"
+                            background: isSelected ? "#06F" : "",
+                            color: isSelected ? "#FFF" : "#555"
                          }}
                     >
                         <div>-</div>
