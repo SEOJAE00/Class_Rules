@@ -26,7 +26,6 @@ export default function AdvancedSearch({ setAdvancedPop }) {
   let sociColor = ["#0e294c", "#0f214a", "#00a99d"];
   let sociAPI = ["ABS", "DNV", "LR"];
   let sociNum = [1, 6, 3];
-  
 
   let [goSociAPI, setGoSociAPI] = useState(sociAPI[0]);
   let [classSoci, setClassSoci] = useState(soci[0]);
@@ -156,15 +155,36 @@ export default function AdvancedSearch({ setAdvancedPop }) {
         setLoading(false);
         return;
       }
+      
+      // 필수 검색어(id: 0)가 비어있는지 확인
       if (!inputs[0].value || inputs[0].value.trim() === '') {
-        alert("검색어를 입력해주세요."); // (lang에 따라 분기 가능)
-        // finally에서 setLoading(false)가 처리합니다.
+        alert("검색어를 입력해주세요.");
+        setLoading(false); // 👈 finally가 있지만 여기서도 명시적으로 꺼줍니다.
         return; // 함수 실행 중단
       }
 
+      // --- 👇 [적용된 부분] ---
+      // 전송할 'criteria' 데이터를 필터링합니다.
+      const criteriaToSend = inputs.filter(input => {
+        // id: 0 (필수) 항목은 항상 포함
+        if (input.id === 0) {
+          return true;
+        }
+        
+        // id: 1 (선택) 항목은 value가 비어있지 않을 때만 포함
+        if (input.id === 1) {
+          return input.value.trim() !== "";
+        }
+        
+        // (id가 0과 1 외에 더 있다면 여기에 규칙 추가, 지금은 무시)
+        return false;
+      });
+      // --- ------------------- ---
+
       // 요청 본문 데이터
       const body = {
-        criteria: inputs,
+        // 'inputs' 대신 필터링된 'criteriaToSend'를 사용
+        criteria: criteriaToSend, 
         selectedValues: selectedValues,
       };
 
@@ -186,7 +206,8 @@ export default function AdvancedSearch({ setAdvancedPop }) {
         alert("검색 결과가 없습니다.");
       } else {
         setAdvSearchResults(results);
-        setAdvSearchKeyword([inputs[0].value, inputs[1].value]);
+        // 'criteriaToSend'를 기반으로 키워드 설정 (id: 1이 없을 수도 있음)
+        setAdvSearchKeyword(criteriaToSend.map(c => c.value));
         setAdvancedPop(false);
         router.push("/viewer"); 
       }
