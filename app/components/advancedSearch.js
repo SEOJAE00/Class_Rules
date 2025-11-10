@@ -46,7 +46,6 @@ export default function AdvancedSearch({ setAdvancedPop }) {
   let [selectedPartIndex, setSelectedPartIndex] = useState(null); // ✅ 수정
   let [selectedChapterIndex, setSelectedChapterIndex] = useState(null); // ✅ 수정
 
-    // 각 SelectBox의 선택된 값을 관리하는 상태
   const [selectedValues, setSelectedValues] = useState({
     "shipClass": [],
     "part": [],
@@ -224,7 +223,7 @@ export default function AdvancedSearch({ setAdvancedPop }) {
 
         <div className={styles.leftBarsoci}>
           <div className={styles.soci}>
-            {lang == "en" ? langData.soci[0] : langData.soci[1]}
+            {lang == "en" ? langData.soci[0] : langData.soci[1]}<span style={{color:'#d00000'}}>*</span>
           </div>
 
           <div className={styles.classSociWrapper} style={!sociDropdownCK ? {height:"59px"} : {height:"210px"}} onClick={()=>setSociDropdownCK(!sociDropdownCK)}>

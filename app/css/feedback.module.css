@@ -10,3 +10,230 @@
   align-items: center;
   z-index: 999;
 }
+.shipNumWrapper {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 740px;
+  position: relative;
+  padding: 50px;
+}
+.closeIcon {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+}
+.ShipNumText {
+  font-size: 36px;
+  font-weight: 600;
+  color: #0066ff;
+  margin-bottom: 10px;
+}
+.ShipNumDes {
+  white-space: pre-line;
+  color: #555;
+  font-weight: 400;
+  line-height: 22px;
+}
+.submitWrapper {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.closeText {
+  color: #888;
+  font-weight: 400;
+  cursor: pointer;
+}
+.makeBtn {
+  width: 98px;
+  height: 36px;
+  font-size: 16px;
+  border: none;
+  background: #e5f6ff;
+  color: #0066ff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.leftBarsoci {
+  margin: 30px 0 0 0px;
+  position: relative;
+}
+.flexBox {
+  margin-bottom: 102px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.soci {
+  font-size: 20px;
+  font-weight: 600;
+}
+.classSociWrapper {
+  width: 420px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 20px 20px 0;
+  transition: 0.3s;
+  flex-direction: column;
+  position: absolute;
+  top: 38;
+  left: 0;
+  z-index: 999;
+}
+.sociText {
+  font-weight: 600;
+  margin-left: 10px;
+}
+.sociTextWrapper2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sociText2 {
+  font-size: 14px;
+  font-weight: 500;
+}
+.selectSoci {
+  width: 411px;
+  height: 48px;
+  margin-left: 3px;
+  padding-left: 18px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  background: #ffffff;
+  transition: 0.3s;
+  border-radius: 4px;
+}
+.active {
+  opacity: 1;
+  pointer-events: auto;
+  transition: 0.4s;
+}
+.disable {
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.4s;
+}
+.selectSoci:hover {
+  background: #e5f6ff;
+  transition: 0.3s;
+}
+.selectTextBox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.selectText {
+  font-size: 20px;
+  font-weight: 600
+}
+.selectText2 {
+  color: #555;
+  font-weight: 400;
+}
+.partBox {
+  width: 200px;
+  height: 58px;
+  padding-right: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.selectText3 {
+  color: #888;
+  font-weight: 500;
+  margin-left: 20px;
+}
+.dropList {
+  width: 200px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  position: absolute;
+  top: 102px;
+  left: 0px;
+  height: fit-content;
+  max-height: 240px;
+  overflow-y: scroll;
+  z-index: 998;
+}
+.listContent {
+  margin: 2px;
+  width: 194px;
+  color: #555;
+  font-weight: 500;
+  padding: 10px 0 10px 18px;
+  cursor: pointer;
+  background: #fff;
+  transition: 0.3s;
+}
+.listContent:hover {
+  background: #e5f6ff;
+  transition: 0.3s;
+}
+.selectedBox {
+  height: 38px;
+  background: #e5f6ff;
+  padding: 7px 10px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.selectedText {
+  font-size: 20px;
+  color: #555;
+  font-weight: 500;
+}
+.selectText span {
+  color: #d00000;
+}
+
+.contents {
+  width: 598.67px;
+  height: 110px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 22px;
+  outline: none;
+  transition: 0.3s;
+  margin-bottom: 30px;
+  padding: 20px;
+  margin: 14px 0 20px 0;
+  resize: none;
+  font-family: 'pretendard';
+}
+.contents:focus {
+  border: 1px solid #06f;
+  background: #f7fcff;
+  transition: 0.3s;
+}
+.checkBox {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #555;
+  background: #fff;
+  border-radius: 4px;
+  margin: 0 6px 0 0;
+}
+.checkBox:checked {
+  outline: none;
+  background: #06f;
+}
