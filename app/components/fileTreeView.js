@@ -27,7 +27,7 @@ export default function FileTreeView({ data, onFileClick, level = 0, isLastFile 
             {/* 폴더/파일 */}
             <div
                 onClick={data.type === "folder" ? toggleFolder : handleFileClick}
-                style={{ cursor: "pointer", marginLeft: `${level * 10}px` }}
+                style={{ cursor: "pointer", marginLeft: `${level * 20}px` }}
             >
                 {data.type === "folder" ? (
                     <div className={styles.folderWrapper}>
@@ -35,14 +35,7 @@ export default function FileTreeView({ data, onFileClick, level = 0, isLastFile 
                         <div className={styles.textWrap}>{data.name}</div>
                     </div>
                 ) : (
-                    <div
-                        className={styles.fileWrapper}
-                        style={{
-                            marginBottom: isLastFile ? '20px' : '0',
-                            background: isSelected ? "#06F" : "",
-                            color: isSelected ? "#FFF" : "#555"
-                         }}
-                    >
+                    <div className={`${styles.fileWrapper} ${isSelected ? styles.yesIsselect : styles.noIsselect}`} style={{marginLeft:`${level * -20}px`, paddingLeft:`${level * 20}px`}}>
                         <div>-</div>
                         <div className={styles.textWrap2}>{data.name}</div>
                     </div>
@@ -50,7 +43,7 @@ export default function FileTreeView({ data, onFileClick, level = 0, isLastFile 
             </div>
 
             {isOpen && data.children && (
-                <div>
+                <div style={{marginBottom:'10px'}}>
                     {data.children.map((child, index) => (
                         <FileTreeView
                             key={child.name}
@@ -58,7 +51,7 @@ export default function FileTreeView({ data, onFileClick, level = 0, isLastFile 
                             onFileClick={onFileClick}
                             level={level + 1}
                             isLastFile={child.type === 'file' && index === data.children.length - 1}
-                            selectedFile={selectedFile} // 5. 재귀 호출 시에도 'selectedFile' prop을 그대로 전달
+                            selectedFile={selectedFile}
                         />
                     ))}
                 </div>

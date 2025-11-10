@@ -14,6 +14,7 @@
 }
 .leftBarWrapper {
   min-width: 420px;
+  max-width: 420px;
   background: #eee;
   border-right: 1px solid #ccc;
   display: flex;
@@ -37,6 +38,7 @@
 }
 .rightBarWrapper {
   min-width: 448px;
+  max-width: 448px;
   background: #fff;
   border-left: 1px solid #ccc;
   display: flex;
@@ -147,6 +149,7 @@
   justify-content: space-between;
   width: 370px;
   margin-top: 10px;
+  gap: 20px;
 }
 .bookmarkContentWrapper {
   display: flex;
@@ -164,8 +167,8 @@
   margin: 14px 0 20px 0;
 }
 .searchInput {
-  width: 294px;
-  height: 42px;
+  width: 294.67px;
+  height: 42.67px;
   padding: 0 54px 0 20px;
   background: #fff;
   border: 1px solid #ccc;
@@ -188,14 +191,15 @@
   height: 24px;
   cursor: pointer;
   position: absolute;
-  top: 9;
-  right: 40;
+  top: 10;
+  right: 39;
 }
 .outlineWrapper{
   width: 370px;
 }
 .returnText {
   font-size: 15px;
+  height: 18px;
   font-weight: 500;
   color: #888;
   cursor: pointer;
@@ -248,7 +252,7 @@
   border-bottom: 1px solid #ccc;
   display: flex;
   align-items: center;
-  padding: 30px 30px 20px 30px;
+  padding: 32px 30px 20px 30px;
   justify-content: space-between;
   gap: 20px;
   overflow: auto;
@@ -329,8 +333,8 @@
 }
 .memoInput {
   padding: 20px;
-  width: 358px;
-  height: 125px;
+  width: 355.67px;
+  height: 123.67px;
   background: #fff;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -407,13 +411,14 @@
 }
 .feedback {
   width: calc(100% + 30px);
-  padding: 20px;
+  padding: 25px;
   color: #0066ff;
   font-size: 18px;
   font-weight: 400;
   text-align: center;
   border-top: 1px solid #ccc;
   cursor: pointer;
+  line-height: 20.33px;
 }
 .searchResultWrapper {
   padding: 20px;

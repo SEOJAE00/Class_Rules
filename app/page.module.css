@@ -108,6 +108,8 @@
 /* 로그인, 회원가입 폼 */
 .loginEmailText {
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 .loginFormWrapper {
   width: 350px;

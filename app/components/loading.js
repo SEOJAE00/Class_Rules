@@ -8,7 +8,7 @@ export default function Loading() {
   const { lang, toggleLang } = useLang();
 
   return (
-    <div className={styles.back} style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+    <div className={styles.back} style={{display:'flex', flexDirection:'column', alignItems:'center', background:"#000", opacity:"0.6"}}>
       <div className="loadingWrapper">
         <img src="/loading.png" height={60} className="spin" />
         

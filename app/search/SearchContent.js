@@ -22,7 +22,7 @@ export default function SearchContent() {
     // 로딩
     let [loading, setLoading] = useState(false);
 
-    let soci = ["KOREAN REGISTER(en)", "KOREAN REGISTER(kr)", "American Bureau of Shipping", "BUREAU VERITAS", "Det Norske Veritas", "Lloyd's Register", "Nippon Kaiji Kyokkai"];
+    let soci = ["KOREAN REGISTER(en)", "KOREAN REGISTER(kr)", "American Bureau of Shipping", "BUREAU VERITAS", "Det Norske Veritas", "Lloyd's Register", "Nippon Kaiji Kyokai"];
     let sociColor = ["#0085ca", "#0085ca", "#0e294c", "#7e190c", "#0f214a", "#00a99d", "#2d5ea3"];
     let sociAPI = ["KR", "KRko", "ABS", "BV", "DNV", "LR", "NK"];
     //let sociNum = [1, 3, 4, 6, 2, 5, 7];

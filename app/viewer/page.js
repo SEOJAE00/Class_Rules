@@ -59,7 +59,7 @@ export default function Viewer() {
   // 상세검색 결과 리턴
   useEffect(() => {
     if (advSearchResults && Object.keys(advSearchResults).length > 0) {
-      console.log(advSearchResults);
+      //console.log(advSearchResults);
       setHtmlContents(advSearchResults);
       setHtmlContent(''); 
       setAdvSearchResults(null);
@@ -134,7 +134,7 @@ export default function Viewer() {
       }
 
       try {
-        console.log(`Fetching outlines for: ${goSociAPI}`); // 👈 디버깅 로그
+        //console.log(`Fetching outlines for: ${goSociAPI}`); // 👈 디버깅 로그
         const response = await axios.get("/api/proxy/api/outlines", {
           // 2. 확정된 goSociAPI 값을 사용
           params: { path: goSociAPI }, 
@@ -225,7 +225,7 @@ export default function Viewer() {
       setHtmlContent('');
       setFilePath('');
       setShowSearch(false);
-      console.log(folderStructure);
+      //console.log(folderStructure);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -250,7 +250,7 @@ export default function Viewer() {
       });
 
       setShipInfoData(response.data);
-      console.log("Ships:", response.data);
+      //console.log("Ships:", response.data);
     } catch (error) {
       console.error("Error fetching ship list:", error);
     } finally {
@@ -274,7 +274,7 @@ export default function Viewer() {
       });
 
       setBookmark(response.data);
-      console.log("Bookmark:", response.data);
+      //console.log("Bookmark:", response.data);
     } catch (error) {
       console.error("Error fetching ship list:", error);
     }
@@ -475,7 +475,7 @@ export default function Viewer() {
 
     // 2. 계산 기록 주입 (calcLog 데이터가 있을 때만 실행)
     if (calcLog) {
-      console.log("Injecting calculation log:", calcLog);
+      //console.log("Injecting calculation log:", calcLog);
       const data = calcLog; // state에서 데이터 가져오기
 
       data.forEach(item => {
@@ -565,7 +565,7 @@ export default function Viewer() {
       const partNumber = match[1];
       const chapterNumber = match[2];
       const sectionNumber = match[4];
-      console.log(partNumber, " | ", chapterNumber, " | ", sectionNumber);
+      //console.log(partNumber, " | ", chapterNumber, " | ", sectionNumber);
       window.partNumber = partNumber;
       window.chapterNumber = chapterNumber;
       window.sectionNumber = sectionNumber;
@@ -659,7 +659,7 @@ export default function Viewer() {
     }, []);
 
     // 각 항목의 값을 출력합니다.
-    console.log('Submitted dataList:', dataList[index][0], submittedData.join(', '));
+    //console.log('Submitted dataList:', dataList[index][0], submittedData.join(', '));
 
     // GET 요청을 보낼 URL 생성
     const baseUrl = '/api/proxy/api/calc?parent=' + dataList[index][0];
@@ -725,7 +725,7 @@ export default function Viewer() {
       );
       setSearchKeywordResult(response.data);
       setShowSearch(true);
-      console.log(response.data);
+      //console.log(response.data);
     } catch (error) {
       console.error("요청 오류:", error);
       if (error.response) {
@@ -932,7 +932,7 @@ export default function Viewer() {
             <div className={styles.outlineWrapper}>
               <div className={`${styles.slider} ${showSearch ? styles.showSearch : ""}`}>
                 
-                <div className={styles.docuOutline}>
+                <div className={styles.docuOutline} style={{marginBottom:'30px'}}>
                   <div>
                     {folderStructure.map((data, i)=>{
                       return (
@@ -1000,6 +1000,9 @@ export default function Viewer() {
             
             // 2. 그 외의 경우 (뭐라도 렌더링할 게 있으면)
             <div className='flex' style={{flexDirection:"column"}}>
+              {isNavigateOpen && (
+                <HtmlPopup html={navigateHtml} isNavigateOpen={isNavigateOpen} setNavigateOpen={setNavigateOpen}></HtmlPopup>
+              )}
               <div className='flex' style={{flexDirection:"column"}}>
                 {Object.keys(htmlContents).length > 0 ?
                   <div className={styles.filePathWrapper}>
@@ -1045,7 +1048,7 @@ export default function Viewer() {
                 }
               </div>
               <div className={styles.htmlWrapper} style={{ overflowY: 'scroll' }} id="content">
-                <div style={{ padding: 10 }}>
+                <div style={{ padding: "20px 10px 10px 10px" }}>
                   {Object.keys(htmlContents).length > 0 ? (
                     // 1. 상세 검색 뷰 (탭)
                     <div id="html" dangerouslySetInnerHTML={{ __html: htmlContents[Object.keys(htmlContents)[currentIndex]] }} />
@@ -1064,7 +1067,7 @@ export default function Viewer() {
             <div className={styles.notHtmlYet}>
               {lang == "en" ? langData.notHtml[0] : langData.notHtml[1]}
             </div> :
-            <div style={{marginBottom:"20px", paddingLeft:"20px"}}>
+            <div style={{marginBottom:"30px", paddingLeft:"20px"}}>
               <div className={styles.currentDocu}>
                 <div className={styles.currentText}>
                   {lang == "en" ? langData.current[0] : langData.current[1]}

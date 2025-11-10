@@ -17,6 +17,7 @@
   width: 740px;
   position: relative;
   padding: 50px;
+  margin-top: -10px;
 }
 .closeIcon {
   cursor: pointer;
@@ -46,7 +47,7 @@
 }
 .newShipNumInput {
   width: calc(100% - 24px);
-  height: 44px;
+  height: 40px;
   border: 1px solid #ccc;
   background: #fff;
   border-radius: 4px;

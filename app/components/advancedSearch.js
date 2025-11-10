@@ -71,9 +71,9 @@ export default function AdvancedSearch({ setAdvancedPop }) {
   }, [andOr, andOrState]);
 
 
-  useEffect(() => {
-    console.log("✅ selectedValues 변경됨:", selectedValues, inputs);
-  }, [selectedValues, partList, chapterList, sectionList, inputs]);
+  // useEffect(() => {
+  //   console.log("✅ selectedValues 변경됨:", selectedValues, inputs);
+  // }, [selectedValues, partList, chapterList, sectionList, inputs]);
 
   // 처음 랜딩 때 보여지는 선급
   useEffect(() => {
@@ -94,7 +94,7 @@ export default function AdvancedSearch({ setAdvancedPop }) {
           },
         });
         setFolderStructure(response.data);
-        console.log(response.data);
+        //console.log(response.data);
         setSelectedValues((prev) => ({
           ...prev,
           shipClass: [goSociNum.toString()]
@@ -275,7 +275,7 @@ export default function AdvancedSearch({ setAdvancedPop }) {
             </div>
           </div>
 
-          <div style={{display:'flex', gap:"20px", marginBottom:"30px"}}>
+          <div style={{display:'flex', gap:"20px", marginBottom:"24px"}}>
 
             <div className='posiRela'>
               <div style={{marginBottom:"6px"}}>

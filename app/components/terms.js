@@ -1,14 +1,22 @@
 import styles from "../css/terms.module.css";
 import langData from "../system/lang.json"
 import { useLang } from "../context/LangContext";
+import { usePathname } from "next/navigation";
 
 export default function Terms({ setTerms }) {
 
   // 언어 변경 함수 전역 콘텍스트
   const { lang, toggleLang } = useLang();
+  const pathname = usePathname();
+
 
   return (
-    <div className={styles.back}>
+    <div
+      className={styles.back}
+      style={{
+        background: pathname === "/" ? "transparent" : "rgba(0,0,0,0.6)",
+      }}
+    >
       <div className={styles.termsWrapper}>
         <div className={styles.closeIcon} onClick={()=>{setTerms(false)}}>
           <img src='/close.png' height="24px"/>

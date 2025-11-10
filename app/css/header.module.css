@@ -18,7 +18,7 @@
 }
 
 .shipInfoBox {
-  width: 130px;
+  width: 127px;
   height: 35px;
   padding: 7px 19px;
   border: 1px solid #ccc;
@@ -50,7 +50,7 @@
   text-overflow: ellipsis;
 }
 .dropdownForm {
-  width: 130px;
+  width: 127px;
   max-height: 200px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -59,6 +59,7 @@
   top: 41;
   right: 0;
   overflow-y: auto;
+  overflow-x: none;
   z-index: 9998;
   /* ✅ 스크롤바 숨기기 */
   scrollbar-width: none; /* Firefox */
@@ -68,7 +69,7 @@
   display: none; /* Chrome, Safari */
 }
 .dropdownContents {
-  width: 124;
+  width: 121.5px;
   margin: 2px;
   padding: 7px 18px;
   background: #fff;
@@ -122,7 +123,7 @@
   min-width: 418px;
 }
 .adSearchBtn {
-  padding: 12px 20px;
+  padding: 12px 20.5px;
   height: 44px;
   font-size: 16px;
   font-weight: 500;
@@ -134,7 +135,7 @@
   line-height: 19px;
 }
 .searchInput {
-  width: 20vw;
+  width: 424px;
   height: 42px;
   padding: 0 54px 0 20px;
   background: #eee;
@@ -162,7 +163,7 @@
   right: 20;
 }
 
-@media (max-width: 1300px){
+@media (max-width: 1500px){
 	.searchInput {
     width: 15vw;
     transition: 0.4s;

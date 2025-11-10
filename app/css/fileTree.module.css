@@ -17,15 +17,24 @@
   width: 370px;
   display: flex;
   gap: 4px;
-  padding: 6px 0 6px 50px;
+  padding-top: 6px;
+  padding-bottom: 6px;
   font-size: 15px;
   line-height: 20px;
   font-weight: 500;
-  margin-left: -40px;
   border-radius: 4px;
   transition: 0.3s;
 }
 .fileWrapper:hover {
-  background: #BCE9FF;
+  background: #0066ff;
   transition: 0.3s;
+  color: #fff;
+}
+.yesIsselect {
+  background: #06f;
+  color: #fff;
+}
+.noIsselect {
+  background: none;
+  color: #555;
 }

@@ -60,9 +60,9 @@ export default function Feedback({ setFeedback }) {
     }));
   }, [contentValue]);
 
-  useEffect(() => {
-    console.log("✅ selectedValues 변경됨:", selectedValues);
-  }, [selectedValues, partList, chapterList, sectionList, contentValue]);
+  // useEffect(() => {
+  //   console.log("✅ selectedValues 변경됨:", selectedValues);
+  // }, [selectedValues, partList, chapterList, sectionList, contentValue]);
 
   useEffect(() => {
     setLoading(true);
@@ -82,7 +82,7 @@ export default function Feedback({ setFeedback }) {
           },
         });
         setFolderStructure(response.data);
-        console.log(response.data);
+        //console.log(response.data);
         setSelectedValues((prev) => ({
           ...prev,
           shipClass: [goSociNum.toString()]
@@ -180,7 +180,7 @@ export default function Feedback({ setFeedback }) {
           </div>
         </div>
 
-        <div style={{marginBottom:"30px"}}>
+        <div style={{marginBottom:"24px"}}>
           <div className={styles.leftBarsoci}>
             <div className={styles.flexBox}>
               <div className={styles.soci}>{lang == "en" ? langData.soci[0] : langData.soci[1]}</div>
@@ -215,7 +215,7 @@ export default function Feedback({ setFeedback }) {
               </div>
             </div>
 
-            <div style={{display:'flex', gap:"20px", marginBottom:"30px"}}>
+            <div style={{display:'flex', gap:"20px", marginBottom:"24px"}}>
 
               <div className='posiRela'>
                 <div style={{marginBottom:"6px"}}>
