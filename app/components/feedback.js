@@ -153,7 +153,8 @@ export default function Feedback({ setFeedback }) {
 
         const data = await response.json();
         console.log("피드백 전송 성공:", data);
-        alert("피드백이 성공적으로 전송되었습니다!");
+        alert(lang == "en" ? "Thank You" : "피드백이 전송되었습니다.");
+        setFeedback(false);
       } catch (error) {
         console.error("피드백 전송 실패:", error);
         alert("피드백 전송 중 오류가 발생했습니다.");
