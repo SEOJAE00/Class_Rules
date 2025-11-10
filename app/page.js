@@ -231,7 +231,9 @@ export default function Home() {
               <input type='text' value={job} onChange={(e)=>{setJob(e.target.value)}} className={styles.inputStyleSign}/>
             </div>
             <div>
-              <div className={styles.loginEmailText}>{lang == "en" ? langData.email[0] : langData.email[1]}<span>*</span></div>
+              <div className={styles.loginEmailText}>{lang == "en" ? langData.email[0] : langData.email[1]}<span>*</span>
+                {!signupEmailCK ? <div className={styles.birthEx}>{lang == "en" ? langData.emailError[0] : langData.emailError[1]}</div> : null}
+              </div>
               <input type='text' value={signupEmail} onChange={handleEmailChange} className={`${styles.inputStyleSign} ${!signupEmailCK ? styles.wrongType : ""}`}/>
             </div>
             <div>
